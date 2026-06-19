@@ -70,7 +70,7 @@ export default function Register() {
       } else {
         setSuccess(`Account created successfully as ${formData.role}! 🎉 Redirecting...`);
         setTimeout(() => {
-          router.push("/login");
+          router.push("/");
         }, 2000);
       }
     } catch (err) {

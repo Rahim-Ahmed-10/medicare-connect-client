@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { BiLogoGithub } from "react-icons/bi";
 // 🌟 react-icons থেকে প্রফেশনাল এবং প্রিমিয়াম আইকনগুলো নিয়ে আসা হয়েছে
 import { FaFacebookF, FaTwitter, FaLinkedinIn } from "react-icons/fa6";
 import { FiMapPin, FiMail, FiPhoneCall } from "react-icons/fi";
@@ -16,7 +17,7 @@ export default function Footer() {
           <div className="space-y-5">
             <Link href="/" className="flex items-center gap-2">
               <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                MediCare<span className="text-cyan-400">Connect</span>
+                Medi<span className="text-cyan-400">Care</span>
               </span>
             </Link>
             <p className="text-sm text-slate-400 leading-relaxed">
@@ -27,23 +28,23 @@ export default function Footer() {
             <div className="flex space-x-3 pt-2">
               {/* Facebook */}
               <a 
-                href="#" 
+                href="https://www.facebook.com/profile.php?id=100071816113262" 
                 className="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white hover:border-blue-500 hover:-translate-y-1 transition-all duration-200 group"
               >
                 <FaFacebookF className="w-4 h-4 transition-transform group-hover:scale-110" />
               </a>
               
-              {/* Twitter (X) */}
+              {/* Github */}
               <a 
-                href="#" 
+                href="https://github.com/Rahim-Ahmed-10" 
                 className="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center text-slate-400 hover:bg-sky-500 hover:text-white hover:border-sky-400 hover:-translate-y-1 transition-all duration-200 group"
               >
-                <FaTwitter className="w-4 h-4 transition-transform group-hover:scale-110" />
+                <BiLogoGithub className="w-4 h-4 transition-transform group-hover:scale-110" />
               </a>
               
               {/* Linkedin */}
               <a 
-                href="#" 
+                href="https://www.linkedin.com/in/rahimahmed01" 
                 className="w-9 h-9 rounded-xl bg-slate-800/80 border border-slate-700/50 flex items-center justify-center text-slate-400 hover:bg-blue-700 hover:text-white hover:border-blue-600 hover:-translate-y-1 transition-all duration-200 group"
               >
                 <FaLinkedinIn className="w-4 h-4 transition-transform group-hover:scale-110" />
@@ -99,7 +100,7 @@ export default function Footer() {
                   <FiMail className="w-4 h-4 text-cyan-400" />
                 </div>
                 <a href="mailto:support@medicareconnect.com" className="hover:text-cyan-400 transition-colors truncate">
-                  support@medicareconnect.com
+                  rahimahmed01690@gmail.com
                 </a>
               </li>
             </ul>

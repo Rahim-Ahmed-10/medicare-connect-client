@@ -2,12 +2,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { signOut, useSession } from "@/lib/auth-client";
+// 🌟 এরর এড়াতে সম্পূর্ণ 'fi' (Feather Icons) ব্যবহার করা হয়েছে যা আপনার প্রজেক্টে অলরেডি সাপোর্টেড
+import { FiPlusSquare, FiMenu, FiX } from "react-icons/fi";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   
-  // 🌟 ইমেজ ব্রোকেন/নষ্ট হলে ট্র্যাকিং করার জন্য একটি স্টেট
+  // ইমেজ ব্রোকেন/নষ্ট হলে ট্র্যাকিং করার জন্য একটি স্টেট
   const [imageError, setImageError] = useState(false);
 
   // Better Auth থেকে সেশন এবং ইউজার ডাটা নিয়ে আসা
@@ -39,17 +41,23 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           
-          {/* 1. Logo */}
+          {/* 1. Logo Section */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                MediCare<span className="text-cyan-500">Connect</span>
+            <Link href="/" className="flex items-center gap-2.5 group">
+              {/* 🌟 প্রিমিয়াম গ্রেডিয়েন্ট লোগো আইকন (Feather Icons দিয়ে সুরক্ষিত করা) */}
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-md shadow-blue-200 group-hover:scale-105 transition-transform duration-200">
+                <FiPlusSquare className="w-5 h-5 text-white" />
+              </div>
+              
+              {/* ব্র্যান্ডের নাম */}
+              <span className="text-2xl font-black bg-gradient-to-r from-slate-900 via-blue-900 to-blue-600 bg-clip-text text-transparent tracking-tight">
+                Medi<span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent font-bold">Care</span>
               </span>
             </Link>
           </div>
 
           {/* 2. Desktop Navigation Links */}
-          <div className="hidden md:flex items-center space-x-8 font-medium text-slate-600">
+          <div className="hidden md:flex items-center space-x-8 font-semibold text-slate-600">
             <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
             <Link href="/doctors" className="hover:text-blue-600 transition-colors">Find Doctors</Link>
             <Link href="/about" className="hover:text-blue-600 transition-colors">About Us</Link>
@@ -63,10 +71,10 @@ export default function Navbar() {
               <div className="w-9 h-9 bg-slate-200 rounded-full animate-pulse"></div>
             ) : !user ? (
               <>
-                <Link href="/login" className="text-slate-600 hover:text-blue-600 font-medium transition-colors">
+                <Link href="/login" className="text-slate-600 hover:text-blue-600 font-semibold transition-colors">
                   Login
                 </Link>
-                <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium shadow-sm shadow-blue-200 transition-all">
+                <Link href="/register" className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-blue-200 hover:shadow-lg hover:shadow-blue-300 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200">
                   Register
                 </Link>
               </>
@@ -75,19 +83,19 @@ export default function Navbar() {
               <div className="relative">
                 <button 
                   onClick={() => setShowDropdown(!showDropdown)}
-                  className="flex items-center gap-2.5 focus:outline-none cursor-pointer group"
+                  className="flex items-center gap-2.5 focus:outline-none cursor-pointer group bg-slate-50/50 hover:bg-slate-50 px-3 py-1.5 rounded-xl border border-transparent hover:border-slate-100 transition-all"
                 >
-                  {/* 🌟 কন্ডিশন: ইমেজ যদি থাকে এবং লোডিং এরর না থাকে তবেই ছবি দেখাবে */}
+                  {/* কন্ডিশন: ইমেজ যদি থাকে এবং লোডিং এরর না থাকে তবেই ছবি দেখাবে */}
                   {user?.image && !imageError ? (
                     <img
                       src={user.image}
                       alt={user.name || "User"}
-                      onError={() => setImageError(true)} // 👈 ছবি নষ্ট বা ব্রোকেন হলে এই ফাংশনটি রান হবে
-                      className="w-9 h-9 rounded-full ring-2 ring-blue-500/20 object-cover transition-all group-hover:ring-blue-500/40"
+                      onError={() => setImageError(true)}
+                      className="w-8 h-8 rounded-full ring-2 ring-blue-500/20 object-cover transition-all group-hover:ring-blue-500/40"
                     />
                   ) : (
-                    // 🌟 ছবি না থাকলে বা ছবি ব্রোকেন হলে এই সুন্দর ফলব্যাকটি দেখাবে
-                    <div className="w-9 h-9 rounded-full bg-slate-200 text-slate-800 flex items-center justify-center font-semibold text-sm shadow-sm ring-1 ring-slate-300 uppercase transition-all group-hover:bg-slate-300">
+                    /* ছবি না থাকলে বা ছবি ব্রোকেন হলে ফলব্যাক */
+                    <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-xs shadow-sm uppercase transition-all group-hover:bg-blue-100">
                       {getInitials(user?.name)}
                     </div>
                   )}
@@ -100,21 +108,21 @@ export default function Navbar() {
 
                 {/* Dropdown Menu */}
                 {showDropdown && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 border border-slate-100 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="px-4 py-2 text-sm text-slate-500 border-b border-slate-50">
-                      <p className="font-semibold text-slate-800 normal-case">{user?.name}</p>
-                      <p className="text-xs truncate text-slate-400">{user?.email}</p>
+                  <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-xl py-1.5 border border-slate-100/80 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="px-4 py-2.5 text-sm text-slate-500 border-b border-slate-50">
+                      <p className="font-bold text-slate-800 normal-case">{user?.name}</p>
+                      <p className="text-xs truncate text-slate-400 mt-0.5">{user?.email}</p>
                       {user?.role && (
-                        <span className="inline-block mt-1 text-[10px] uppercase font-bold bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">
+                        <span className="inline-block mt-1.5 text-[10px] uppercase font-extrabold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md">
                           {user.role}
                         </span>
                       )}
                     </div>
-                    <Link href="/dashboard/profile" onClick={() => setShowDropdown(false)} className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">My Profile</Link>
-                    <Link href="/dashboard" onClick={() => setShowDropdown(false)} className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50">Dashboard</Link>
+                    <Link href="/dashboard/profile" onClick={() => setShowDropdown(false)} className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50/80">My Profile</Link>
+                    <Link href="/dashboard" onClick={() => setShowDropdown(false)} className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50/80">Dashboard</Link>
                     <button 
                       onClick={handleLogout} 
-                      className="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium cursor-pointer"
+                      className="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-bold cursor-pointer border-t border-slate-50 mt-1"
                     >
                       Logout
                     </button>
@@ -128,12 +136,13 @@ export default function Navbar() {
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-lg text-slate-500 hover:bg-slate-100 focus:outline-none cursor-pointer"
+              className="inline-flex items-center justify-center p-2 rounded-xl text-slate-500 hover:bg-slate-100 focus:outline-none cursor-pointer"
             >
+              {/* 🌟 এখানেও মডিউল এরর এড়াতে FiMenu এবং FiX ব্যবহার করা হয়েছে */}
               {isOpen ? (
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                <FiX className="h-6 w-6 text-slate-600" />
               ) : (
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+                <FiMenu className="h-6 w-6 text-slate-600" />
               )}
             </button>
           </div>
@@ -142,43 +151,42 @@ export default function Navbar() {
 
       {/* 5. Mobile Menu Links */}
       {isOpen && (
-        <div className="md:hidden border-t border-slate-100 bg-white px-4 pt-2 pb-4 space-y-2 font-medium text-slate-600 shadow-inner">
-          <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-blue-600">Home</Link>
-          <Link href="/doctors" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-blue-600">Find Doctors</Link>
-          <Link href="/about" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-blue-600">About Us</Link>
-          <Link href="/contact" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-blue-600">Contact Us</Link>
-          {user && <Link href="/dashboard" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-slate-50 hover:text-blue-600">Dashboard</Link>}
+        <div className="md:hidden border-t border-slate-100 bg-white px-4 pt-2 pb-4 space-y-1.5 font-semibold text-slate-600 shadow-inner">
+          <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Home</Link>
+          <Link href="/doctors" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Find Doctors</Link>
+          <Link href="/about" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">About Us</Link>
+          <Link href="/contact" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Contact Us</Link>
+          {user && <Link href="/dashboard" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Dashboard</Link>}
           
           <div className="border-t border-slate-100 pt-3 flex flex-col gap-2">
             {!user ? (
               <>
-                <Link href="/login" onClick={() => setIsOpen(false)} className="text-center py-2 text-slate-600 hover:text-blue-600">Login</Link>
-                <Link href="/register" onClick={() => setIsOpen(false)} className="text-center bg-blue-600 text-white py-2 rounded-xl">Register</Link>
+                <Link href="/login" onClick={() => setIsOpen(false)} className="text-center py-2 text-slate-600 hover:text-blue-600 font-bold">Login</Link>
+                <Link href="/register" onClick={() => setIsOpen(false)} className="text-center bg-blue-600 text-white py-2.5 rounded-xl font-bold">Register</Link>
               </>
             ) : (
               <div className="flex flex-col gap-2">
-                {/* মোবাইল মেনুতে ইউজারের সংক্ষিপ্ত পরিচিতি */}
-                <div className="flex items-center gap-3 px-3 py-2 bg-slate-50 rounded-xl">
+                <div className="flex items-center gap-3 px-3 py-2.5 bg-slate-50 rounded-xl">
                   {user?.image && !imageError ? (
                     <img
                       src={user.image}
                       alt="User"
-                      onError={() => setImageError(true)} // 👈 মোবাইলেও হ্যান্ডেল করা হয়েছে
+                      onError={() => setImageError(true)}
                       className="w-10 h-10 rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-slate-200 text-slate-800 flex items-center justify-center font-semibold text-sm ring-1 ring-slate-300 uppercase">
+                    <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-sm uppercase">
                       {getInitials(user?.name)}
                     </div>
                   )}
                   <div className="truncate">
-                    <p className="text-sm font-semibold text-slate-800 leading-none normal-case">{user?.name}</p>
+                    <p className="text-sm font-bold text-slate-800 leading-none normal-case">{user?.name}</p>
                     <p className="text-xs text-slate-400 mt-1 truncate">{user?.email}</p>
                   </div>
                 </div>
                 <button 
                   onClick={handleLogout} 
-                  className="text-center bg-red-50 text-red-600 py-2 rounded-xl font-medium cursor-pointer"
+                  className="text-center bg-red-50 text-red-600 py-2.5 rounded-xl font-bold cursor-pointer"
                 >
                   Logout
                 </button>
