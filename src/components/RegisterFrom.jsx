@@ -2,7 +2,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signUp } from "@/lib/auth-client"; // আপনার সঠিক পাথ অনুযায়ী নিশ্চিত করুন
+// 🌟 Better Auth-এর ক্লায়েন্ট মেথডগুলো সাধারণত 'authClient' অবজেক্টের ভেতর থাকে
+import { authClient } from "@/lib/auth-client"; 
 
 export default function Register() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function Register() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false); // গুগল লোডিং স্টেট
+  const [googleLoading, setGoogleLoading] = useState(false); 
 
   // পাসওয়ার্ড ভ্যালিডেশন চেক
   const validatePassword = (password) => {
@@ -29,7 +30,7 @@ export default function Register() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError(""); // ইনপুট চেঞ্জ হলে এরর রিমুভ হবে
+    setError(""); 
   };
 
   // ১. সাধারণ ইমেইল/পাসওয়ার্ড সাবমিট
@@ -52,15 +53,15 @@ export default function Register() {
 
     setLoading(true);
     try {
-      const res = await signUp.email({
+      // 🌟 কারেকশন: Better Auth-এর নিয়ম অনুযায়ী কাস্টম ফিল্ডগুলো পাস করতে হয়
+      const res = await authClient.signUp.email({
         email: formData.email,
         password: formData.password,
         name: formData.name,
         image: formData.image,
-        data: {
-          role: formData.role,
-          status: formData.role === "doctor" ? "unverified" : "active",
-        }
+        // Better Auth ক্লায়েন্ট সরাসরি এই রুট লেভেলের কাস্টম ফিল্ডগুলো নিয়ে আপনার সার্ভার স্কিমায় ম্যাপ করবে
+        role: formData.role,
+        status: formData.role === "doctor" ? "unverified" : "active",
       });
 
       console.log("Better Auth Response:", res);
@@ -85,10 +86,11 @@ export default function Register() {
     setError("");
     setGoogleLoading(true);
     try {
-      const res = await signUp.social({
+      // 🌟 কারেকশন: সোশ্যাল সাইন-আপের ক্ষেত্রে কাস্টম ফিল্ডগুলো 'map' অবজেক্টের ভেতর পাঠাতে হয়
+      const res = await authClient.signUp.social({
         provider: "google",
-        callbackURL: "/", // সফল লগইন শেষে ড্যাশবোর্ড বা হোম পেজের রুট
-        data: {
+        callbackURL: "/", 
+        map: {
           role: formData.role,
           status: formData.role === "doctor" ? "unverified" : "active",
         }
@@ -243,14 +245,13 @@ export default function Register() {
           <div className="flex-grow border-t border-slate-150"></div>
         </div>
 
-        {/* 🌟 সুন্দর এবং প্রিমিয়াম গুগল বাটন */}
+        {/* গুগল বাটন */}
         <button
           type="button"
           onClick={handleGoogleSignUp}
           disabled={loading || googleLoading}
           className="w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-bold py-3 px-4 rounded-xl border border-slate-200 shadow-sm hover:shadow transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-sm group"
         >
-          {/* 🌟 গুগল ব্র্যান্ড গাইডলাইনের অরিজিনাল ৪ কালার SVG আইকন */}
           <svg className="w-5 h-5 transition-transform duration-200 group-hover:scale-105" viewBox="0 0 24 24">
             <path
               fill="#4285F4"

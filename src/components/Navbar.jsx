@@ -2,7 +2,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { signOut, useSession } from "@/lib/auth-client";
-// 🌟 এরর এড়াতে সম্পূর্ণ 'fi' (Feather Icons) ব্যবহার করা হয়েছে যা আপনার প্রজেক্টে অলরেডি সাপোর্টেড
 import { FiPlusSquare, FiMenu, FiX } from "react-icons/fi";
 
 export default function Navbar() {
