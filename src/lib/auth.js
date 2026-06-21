@@ -19,6 +19,9 @@ user: {
         additionalFields: {
             role: { type: "string" },
             status: { type: "string" },
-        },
+            plan:{
+                defaultValue:"free"
+            }
+        }, 
     },
 });

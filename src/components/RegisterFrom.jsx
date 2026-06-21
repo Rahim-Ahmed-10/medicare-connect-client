@@ -62,6 +62,7 @@ export default function Register() {
         // Better Auth ক্লায়েন্ট সরাসরি এই রুট লেভেলের কাস্টম ফিল্ডগুলো নিয়ে আপনার সার্ভার স্কিমায় ম্যাপ করবে
         role: formData.role,
         status: formData.role === "doctor" ? "unverified" : "active",
+        plan:'free'
       });
 
       console.log("Better Auth Response:", res);
