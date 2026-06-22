@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { signOut, useSession } from "@/lib/auth-client";
 import { FiPlusSquare, FiMenu, FiX } from "react-icons/fi";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,6 +21,11 @@ export default function Navbar() {
     if (!name) return "U";
     return name.trim().charAt(0).toUpperCase();
   };
+
+  const pathname= usePathname();
+  if(pathname.includes('dashboard')){
+    return null;
+  }
 
   // লগআউট হ্যান্ডেলার
   const handleLogout = async () => {

@@ -1,11 +1,18 @@
 "use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { BiLogoGithub } from "react-icons/bi";
 // 🌟 react-icons থেকে প্রফেশনাল এবং প্রিমিয়াম আইকনগুলো নিয়ে আসা হয়েছে
 import { FaFacebookF, FaTwitter, FaLinkedinIn } from "react-icons/fa6";
 import { FiMapPin, FiMail, FiPhoneCall } from "react-icons/fi";
 
 export default function Footer() {
+
+  const pathname= usePathname();
+    if(pathname.includes('dashboard')){
+      return null;
+    }
+  
   return (
     <footer className="bg-slate-900 text-slate-300 pt-16 pb-8 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

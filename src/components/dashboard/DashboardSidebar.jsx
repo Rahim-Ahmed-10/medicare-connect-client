@@ -1,62 +1,129 @@
-"use client";
+import Link from "next/link";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+
+// গ্র্যাভিটি-র নিজস্ব ভ্যালিড আইকন
 import {
   Bell,
   Envelope,
   Gear,
   House,
-  LayoutSideContentLeft,
-  Magnifier,
-  Person,
 } from "@gravity-ui/icons";
-import { Button, Drawer } from "@heroui/react";
 
-export function DashboardSidebar() {
-  const navItems = [
-    { icon: House, label: "Home" },
-    { icon: Magnifier, label: "Search" },
-    { icon: Bell, label: "Notifications" },
-    { icon: Envelope, label: "Messages" },
-    { icon: Person, label: "Profile" },
-    { icon: Gear, label: "Settings" },
-  ];
+// মেডিকেল ও রোল ভিত্তিক আইকন
+import { 
+  FaUserMd, 
+  FaUserInjured, 
+  FaFileMedical, 
+  FaCalendarCheck, 
+  FaHeartbeat 
+} from "react-icons/fa";
 
-  const navContent=  <nav className="flex flex-col gap-1">
-                  {navItems.map((item) => (
-                    <button
-                      key={item.label}
-                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-default"
-                      type="button"
-                    >
-                      <item.icon className="size-5 text-muted" />
-                      {item.label}
-                    </button>
-                  ))}
-                </nav>
+export default async function DashboardSidebar() {
+  // 1. 🔐 সার্ভার সাইড থেকে সেশন ডাটা ফেচ করা হলো
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const user = session?.user;
+  const userRole = session?.user?.role || "patient";
+
+  // 2. 🛠️ রোল বেসড ড্যাশবোর্ড আইটেম
+  const dashboardItems = {
+    admin: [
+      { icon: House, label: "Home", link: "/dashboard/admin" },
+      { icon: FaUserMd, label: "Manage Doctors", link: "/dashboard/admin/doctors" },
+      { icon: FaUserInjured, label: "Manage Patients", link: "/dashboard/admin/patients" },
+      { icon: FaFileMedical, label: "All Reports", link: "/dashboard/admin/reports" },
+      { icon: Bell, label: "Notifications", link: "/dashboard/admin/notifications" },
+      { icon: Gear, label: "Settings", link: "/dashboard/admin/settings" },
+    ],
+    doctor: [
+      { icon: House, label: "Home", link: "/dashboard/doctor" },
+      { icon: FaCalendarCheck, label: "Appointments", link: "/dashboard/doctor/appointments" },
+      { icon: FaUserInjured, label: "My Patients", link: "/dashboard/doctor/patients" },
+      { icon: FaFileMedical, label: "Prescriptions", link: "/dashboard/doctor/prescriptions" },
+      { icon: Envelope, label: "Messages", link: "/dashboard/doctor/messages" },
+      { icon: Gear, label: "Settings", link: "/dashboard/doctor/settings" },
+    ],
+    patient: [
+      { icon: House, label: "Home", link: "/dashboard/patient" },
+      { icon: FaUserMd, label: "Find Doctors", link: "/dashboard/patient/doctors" },
+      { icon: FaCalendarCheck, label: "My Bookings", link: "/dashboard/patient/bookings" },
+      { icon: FaHeartbeat, label: "Health Records", link: "/dashboard/patient/records" },
+      { icon: Envelope, label: "Messages", link: "/dashboard/patient/messages" },
+      { icon: Gear, label: "Settings", link: "/dashboard/patient/settings" },
+    ],
+  };
+
+  const currentNavItems = dashboardItems[userRole] || dashboardItems["patient"];
 
   return (
     <>
-    <aside className="hidden w-64 shrink-0 border-r border-default p-4 lg:block">
-        {navContent}
-    </aside>
-      <Drawer>
-        <Button className="lg:hidden" variant="secondary">
-          <LayoutSideContentLeft size={16} />
-          Sidebar
-        </Button>
-        <Drawer.Backdrop>
-          <Drawer.Content placement="left">
-            <Drawer.Dialog>
-              <Drawer.CloseTrigger />
-              <Drawer.Header>
-                <Drawer.Heading>Navigation</Drawer.Heading>
-              </Drawer.Header>
-              <Drawer.Body>
-               {navContent}
-              </Drawer.Body>
-            </Drawer.Dialog>
-          </Drawer.Content>
-        </Drawer.Backdrop>
-      </Drawer>
+      {/* 💻 ডেস্কটপ সাইডবার (পিওর সার্ভার রেন্ডার্ড) */}
+      <aside className="hidden w-64 shrink-0 border-r border-white/[0.06] bg-[#090D16] p-4.5 lg:block h-screen sticky top-0">
+        
+        {/* লোগো সেকশন */}
+        <div className="flex items-center gap-3 select-none mb-6 px-1">
+          <div className="flex size-9.5 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 text-white shadow-lg shadow-blue-500/20">
+            <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 10.5V20a2 2 0 01-2 2H7a2 2 0 01-2-2v-9.5m14 0a2 2 0 00-3-1.7l-4.3 2.5a2 2 0 01-2.2 0L5.3 8.8a2 2 0 00-3 1.7m16 0V6a2 2 0 00-2-2H7a2 2 0 00-2 2v4.5m14 0h-3.5a1.5 1.5 0 01-1.5-1.5V6" />
+            </svg>
+          </div>
+          <div className="flex flex-col text-left">
+            <span className="text-lg font-black bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent tracking-tight font-sans">
+              MediCare
+            </span>
+            <span className="text-[9px] text-blue-400 font-bold tracking-widest uppercase -mt-1">
+              Health Sync
+            </span>
+          </div>
+        </div>
+        
+        {/* ইউজারের প্রোফাইল কার্ড (শুধু নাম ও প্রথম অক্ষর) */}
+        {user && (
+          <div className="flex items-center gap-2 mb-4 p-1.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
+            {/* 👤 ছবির বদলে স্টাইলিশ গোল্ডেন/ব্লু টেক্সট এভাটার */}
+            <div className="size-8 rounded-lg bg-gradient-to-br from-blue-600/20 to-indigo-600/30 text-blue-400 border border-blue-500/10 flex items-center justify-center font-bold text-sm uppercase select-none shrink-0">
+              {user.name?.charAt(0) || "U"}
+            </div>
+            
+            <div className="flex flex-col overflow-hidden text-left">
+              <span className="text-xs font-bold text-slate-200 truncate">{user.name || "User"}</span>
+              <span className="text-[10px] text-blue-400 font-semibold capitalize mt-0.5">{userRole}</span>
+            </div>
+          </div>
+        )}
+
+        {/* লিংক লিস্ট */}
+        <div className="h-[calc(100vh-160px)] overflow-y-auto no-scrollbar">
+          <nav className="flex flex-col gap-2 w-full">
+            {currentNavItems.map((item) => (
+              <Link
+                key={item.label}
+                href={item.link}
+                className="group flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold transition-all duration-200 relative cursor-pointer overflow-hidden text-slate-400 hover:bg-white/[0.04] hover:text-white"
+              >
+                <div className="flex items-center gap-3.5 z-10 text-left">
+                  <item.icon className="size-4.5 transition-transform duration-200 group-hover:scale-105 text-slate-400 group-hover:text-blue-400" />
+                  <span className="tracking-wide ml-1">{item.label}</span>
+                </div>
+                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </aside>
+
+      {/* 📱 মোবাইল ভিউ */}
+      <div className="lg:hidden p-4 bg-[#090D16] border-b border-white/[0.06] flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-lg font-black text-white">MediCare</span>
+        </div>
+        <div className="inline-flex items-center rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20 capitalize">
+          {userRole}
+        </div>
+      </div>
     </>
   );
 }
