@@ -64,10 +64,10 @@ export default function Navbar() {
           {/* 2. Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-8 font-semibold text-slate-600">
             <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
-            <Link href="/doctors" className="hover:text-blue-600 transition-colors">Find Doctors</Link>
+            <Link href="/find-doctors" className="hover:text-blue-600 transition-colors">Find Doctors</Link>
             <Link href="/about" className="hover:text-blue-600 transition-colors">About Us</Link>
             <Link href="/contact" className="hover:text-blue-600 transition-colors">Contact Us</Link>
-            {user && <Link href="/dashboard" className="hover:text-blue-600 transition-colors">Dashboard</Link>}
+            {user && <Link href={`dashboard/${user?.role}`} className="hover:text-blue-600 transition-colors">Dashboard</Link>}
           </div>
 
           {/* 3. Auth Buttons / User Profile Dropdown */}
@@ -124,7 +124,7 @@ export default function Navbar() {
                       )}
                     </div>
                     <Link href="/dashboard/profile" onClick={() => setShowDropdown(false)} className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50/80">My Profile</Link>
-                    <Link href="/dashboard" onClick={() => setShowDropdown(false)} className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50/80">Dashboard</Link>
+                    <Link href={`dashboard/${user?.role}`}  onClick={() => setShowDropdown(false)} className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50/80">Dashboard</Link>
                     <button 
                       onClick={handleLogout} 
                       className="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-bold cursor-pointer border-t border-slate-50 mt-1"

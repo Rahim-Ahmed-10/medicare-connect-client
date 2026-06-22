@@ -32,25 +32,25 @@ export default async function DashboardSidebar() {
   const dashboardItems = {
     admin: [
       { icon: House, label: "Home", link: "/dashboard/admin" },
-      { icon: FaUserMd, label: "Manage Doctors", link: "/dashboard/admin/doctors" },
-      { icon: FaUserInjured, label: "Manage Patients", link: "/dashboard/admin/patients" },
-      { icon: FaFileMedical, label: "All Reports", link: "/dashboard/admin/reports" },
-      { icon: Bell, label: "Notifications", link: "/dashboard/admin/notifications" },
+      { icon: FaUserMd, label: "Doctors", link: "/dashboard/admin/doctors" },
+      { icon: FaUserInjured, label: "Patients", link: "/dashboard/admin/patients" },
+      { icon: FaFileMedical, label: "Reports", link: "/dashboard/admin/reports" },
+      { icon: Bell, label: "Alerts", link: "/dashboard/admin/notifications" },
       { icon: Gear, label: "Settings", link: "/dashboard/admin/settings" },
     ],
     doctor: [
       { icon: House, label: "Home", link: "/dashboard/doctor" },
-      { icon: FaCalendarCheck, label: "Appointments", link: "/dashboard/doctor/appointments" },
-      { icon: FaUserInjured, label: "My Patients", link: "/dashboard/doctor/patients" },
-      { icon: FaFileMedical, label: "Prescriptions", link: "/dashboard/doctor/prescriptions" },
+      { icon: FaCalendarCheck, label: "Appts", link: "/dashboard/doctor/appointments" },
+      { icon: FaUserInjured, label: "Patients", link: "/dashboard/doctor/patients" },
+      { icon: FaFileMedical, label: "Presc", link: "/dashboard/doctor/prescriptions" },
       { icon: Envelope, label: "Messages", link: "/dashboard/doctor/messages" },
       { icon: Gear, label: "Settings", link: "/dashboard/doctor/settings" },
     ],
     patient: [
       { icon: House, label: "Home", link: "/dashboard/patient" },
-      { icon: FaUserMd, label: "Find Doctors", link: "/dashboard/patient/doctors" },
-      { icon: FaCalendarCheck, label: "My Bookings", link: "/dashboard/patient/bookings" },
-      { icon: FaHeartbeat, label: "Health Records", link: "/dashboard/patient/records" },
+      { icon: FaUserMd, label: "Find Doc", link: "/dashboard/patient/doctors" },
+      { icon: FaCalendarCheck, label: "Bookings", link: "/dashboard/patient/bookings" },
+      { icon: FaHeartbeat, label: "Records", link: "/dashboard/patient/records" },
       { icon: Envelope, label: "Messages", link: "/dashboard/patient/messages" },
       { icon: Gear, label: "Settings", link: "/dashboard/patient/settings" },
     ],
@@ -60,7 +60,7 @@ export default async function DashboardSidebar() {
 
   return (
     <>
-      {/* 💻 ডেস্কটপ সাইডবার (পিওর সার্ভার রেন্ডার্ড) */}
+      {/* 💻 ডেস্কটপ সাইডবার (শুধুমাত্র বড় স্ক্রিনে দেখাবে - lg:block) */}
       <aside className="hidden w-64 shrink-0 border-r border-white/[0.06] bg-[#090D16] p-4.5 lg:block h-screen sticky top-0">
         
         {/* লোগো সেকশন */}
@@ -80,14 +80,12 @@ export default async function DashboardSidebar() {
           </div>
         </div>
         
-        {/* ইউজারের প্রোফাইল কার্ড (শুধু নাম ও প্রথম অক্ষর) */}
+        {/* ইউজারের প্রোফাইল কার্ড */}
         {user && (
           <div className="flex items-center gap-2 mb-4 p-1.5 rounded-xl bg-white/[0.02] border border-white/[0.04]">
-            {/* 👤 ছবির বদলে স্টাইলিশ গোল্ডেন/ব্লু টেক্সট এভাটার */}
             <div className="size-8 rounded-lg bg-gradient-to-br from-blue-600/20 to-indigo-600/30 text-blue-400 border border-blue-500/10 flex items-center justify-center font-bold text-sm uppercase select-none shrink-0">
               {user.name?.charAt(0) || "U"}
             </div>
-            
             <div className="flex flex-col overflow-hidden text-left">
               <span className="text-xs font-bold text-slate-200 truncate">{user.name || "User"}</span>
               <span className="text-[10px] text-blue-400 font-semibold capitalize mt-0.5">{userRole}</span>
@@ -115,15 +113,19 @@ export default async function DashboardSidebar() {
         </div>
       </aside>
 
-      {/* 📱 মোবাইল ভিউ */}
-      <div className="lg:hidden p-4 bg-[#090D16] border-b border-white/[0.06] flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-black text-white">MediCare</span>
-        </div>
-        <div className="inline-flex items-center rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-medium text-blue-400 ring-1 ring-inset ring-blue-500/20 capitalize">
-          {userRole}
-        </div>
-      </div>
+      {/* 📱 মোবাইল বটম নেভিগেশন (ছোট স্ক্রিনে নিচে ফিক্সড থাকবে - lg:hidden) */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#090D16]/95 backdrop-blur-lg border-t border-white/[0.06] px-2 py-2 flex items-center justify-around shadow-2xl">
+        {currentNavItems.slice(0, 5).map((item) => (
+          <Link
+            key={item.label}
+            href={item.link}
+            className="flex flex-col items-center justify-center gap-1.5 px-2 py-1 rounded-xl text-slate-400 hover:text-blue-400 active:scale-95 transition-all w-16"
+          >
+            <item.icon className="size-5" />
+            <span className="text-[10px] font-medium tracking-tight text-center truncate w-full">{item.label}</span>
+          </Link>
+        ))}
+      </nav>
     </>
   );
 }

@@ -4,7 +4,7 @@ import { FiHome, FiAlertCircle } from "react-icons/fi";
 
 export default function NotFound() {
   return (
-    <div className="min-h-[85vh] bg-slate-50 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[85vh] bg-slate-50 flex flex-col items-center justify-center pt-8 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full text-center space-y-8 bg-white p-8 rounded-2xl shadow-xl shadow-slate-100 border border-slate-100 animate-in fade-in zoom-in-95 duration-300">
         
         {/* 1. Illustration (Tailwind UI দিয়ে তৈরি মডার্ন মেডিকেল-স্টাইল ৪MD৪ ইলাস্ট্রেশন) */}
