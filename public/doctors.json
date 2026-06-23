@@ -1,0 +1,62 @@
+[
+  {
+    "doctorName": "Dr. Md. Rafiqul Islam",
+    "specialization": "Cardiologist",
+    "qualifications": "MBBS, FCPS (Cardiology), MD",
+    "experience": "12 Years",
+    "consultationFee": 10,
+    "hospitalName": "Dhaka Medical College & Hospital",
+    "profileImage": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=400",
+    "availableDays": ["Saturday", "Monday", "Wednesday"],
+    "availableSlots": ["04:00 PM", "05:00 PM", "06:00 PM"],
+    "verificationStatus": "Verified"
+  },
+  {
+    "doctorName": "Dr. Nusrat Jahan",
+    "specialization": "Gynecologist",
+    "qualifications": "MBBS, MS (OBGYN), DGO",
+    "experience": "8 Years",
+    "consultationFee": 80,
+    "hospitalName": "Square Hospital, Dhaka",
+    "profileImage": "https://images.unsplash.com/photo-1594824813573-246434e3b96f?q=80&w=400",
+    "availableDays": ["Sunday", "Tuesday", "Thursday"],
+    "availableSlots": ["02:00 PM", "03:00 PM"],
+    "verificationStatus": "Verified"
+  },
+  {
+    "doctorName": "Dr. Tanvir Ahmed",
+    "specialization": "Pediatrician",
+    "qualifications": "MBBS, MD (Pediatrics)",
+    "experience": "10 Years",
+    "consultationFee": 90,
+    "hospitalName": "Evercare Hospital, Dhaka",
+    "profileImage": "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=400",
+    "availableDays": ["Saturday", "Sunday", "Tuesday"],
+    "availableSlots": ["06:00 PM", "07:00 PM", "08:00 PM"],
+    "verificationStatus": "Verified"
+  },
+  {
+    "doctorName": "Dr. Saima Akter",
+    "specialization": "Dermatologist",
+    "qualifications": "MBBS, DDV (Dermatology)",
+    "experience": "6 Years",
+    "consultationFee": 70,
+    "hospitalName": "Bangabandhu Sheikh Mujib Medical University",
+    "profileImage": "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=400",
+    "availableDays": ["Monday", "Wednesday", "Thursday"],
+    "availableSlots": ["05:00 PM", "06:30 PM"],
+    "verificationStatus": "Pending"
+  },
+  {
+    "doctorName": "Dr. Ahsan Habib",
+    "specialization": "Neurologist",
+    "qualifications": "MBBS, FCPS (Neurology)",
+    "experience": "15 Years",
+    "consultationFee": 20,
+    "hospitalName": "National Institute of Neurosciences & Hospital",
+    "profileImage": "https://images.unsplash.com/photo-1537368910025-700350fe46c7?q=80&w=400",
+    "availableDays": ["Saturday", "Tuesday", "Thursday"],
+    "availableSlots": ["03:00 PM", "04:00 PM"],
+    "verificationStatus": "Verified"
+  }
+]

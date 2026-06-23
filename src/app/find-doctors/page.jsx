@@ -1,194 +1,159 @@
 "use client";
-import React, { useState } from "react";
-import {
-  FaSearch,
-  FaUserMd,
-  FaStar,
-  FaStethoscope,
-  FaMapMarkerAlt,
-} from "react-icons/fa";
 
-// ডামি ডক্টর ডাটা (পরবর্তীতে আপনার ডাটাবেজ থেকে ফেচ করে বসাতে পারবেন)
-const initialDoctors = [
-  {
-    id: 1,
-    name: "Dr. Asif Rahman",
-    specialty: "Cardiologist",
-    experience: "12 years",
-    rating: 4.9,
-    reviews: 120,
-    location: "Dhaka Medical College",
-    image:
-      "https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=200&auto=format&fit=crop",
-  },
-  {
-    id: 2,
-    name: "Dr. Nusrat Jahan",
-    specialty: "Pediatrician",
-    experience: "8 years",
-    rating: 4.8,
-    reviews: 95,
-    location: "Popular Diagnostic, Dhanmondi",
-    image: "https://img.magnific.com/free-photo/woman-doctor-wearing-lab-coat-with-stethoscope-isolated_1303-29791.jpg", // 💡 এটি Next.js-এ সরাসরি এবং দ্রুত লোড হবে
-  },
-  {
-    id: 3,
-    name: "Dr. S. M. Imran",
-    specialty: "Neurologist",
-    experience: "15 years",
-    rating: 5.0,
-    reviews: 210,
-    location: "Square Hospital, Panthapath",
-    image:
-      "https://images.unsplash.com/photo-1537368910025-700350fe46c7?q=80&w=200&auto=format&fit=crop",
-  },
-  {
-    id: 4,
-    name: "Dr. Farhana Yasmin",
-    specialty: "Gynecologist",
-    experience: "10 years",
-    rating: 4.7,
-    reviews: 88,
-    location: "Ibn Sina, Mirpur",
-    image:
-      "https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?q=80&w=200&auto=format&fit=crop",
-  },
-];
+import { useEffect, useState } from "react";
+// 📝 ফিক্স ১: ক্যাশ ফ্রেন্ডলি আইকন ইম্পোর্ট
+import { FaHeart, FaClock, FaCalendar, FaStethoscope } from "react-icons/fa";
+import Link from "next/link"; // 📝 ফিক্স ২: ক্লায়েন্ট সাইড নেভিগেশনের জন্য Next.js Link ব্যবহার করা ভালো
 
-const categories = [
-  "All",
-  "Cardiologist",
-  "Pediatrician",
-  "Neurologist",
-  "Gynecologist",
-];
+export default function AllDoctorsPage() {
+  const [doctors, setDoctors] = useState([]);
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
-const FindDoctorPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  useEffect(() => {
+    fetch("/doctors.json")
+      .then((res) => res.json())
+      .then((data) => {
+        setDoctors(data);
+        setIsDataLoading(false);
+      })
+      .catch((error) => {
+        console.error("Data load korte somossa hoyeche:", error);
+        setIsDataLoading(false);
+      });
+  }, []);
 
-  // সার্চ এবং ক্যাটাগরি ফিল্টারিং লজিক
-  const filteredDoctors = initialDoctors.filter((doctor) => {
-    const matchesSearch =
-      doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doctor.specialty.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "All" || doctor.specialty === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  if (isDataLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-[#040711]">
+        <div className="text-xl font-semibold text-blue-600 animate-pulse">
+          Loading All Doctors List...
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-1 pt-8">
-      {/* 🏥 হেডার এবং ওয়েলকাম টেক্সট */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-6 rounded-2xl border border-white/[0.06] text-white">
-        <div>
-          <h1 className="text-2xl font-black tracking-tight font-sans">
-            Find Your Doctor
+    <div className="min-h-screen bg-[#040711] py-10 text-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Page Top Title */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-extrabold text-slate-100 tracking-tight">
+            Find Our Professional Doctors
           </h1>
-          <p className="text-xs text-blue-200 mt-1">
-            Book an appointment with our top medical specialists.
+          <p className="mt-3 max-w-2xl mx-auto text-xl text-slate-400 sm:mt-4">
+            Book appointments with the best specialists from around the country.
           </p>
         </div>
 
-        {/* 🔍 সার্চ বার */}
-        <div className="relative w-full md:w-80">
-          <input
-            type="text"
-            placeholder="Search doctor or specialty..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white/10 border border-white/20 focus:outline-none focus:border-blue-400 focus:bg-white/20 text-sm text-white placeholder-slate-400 backdrop-blur-md transition-all"
-          />
-          <FaSearch className="absolute left-3.5 top-3.5 text-slate-400 size-4" />
+        {/* Total Count */}
+        <div className="mb-6">
+          <p className="text-slate-400 font-medium">
+            Total Doctors Found: <span className="text-blue-500 font-bold">{doctors.length}</span>
+          </p>
         </div>
-      </div>
 
-      {/* 🏷️ ক্যাটাগরি ফিল্টার চিপস */}
-      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-        {categories.map((category) => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
-              selectedCategory === category
-                ? "bg-blue-600 text-white shadow-md shadow-blue-500/20"
-                : "bg-[#090D16] text-slate-400 border border-white/[0.06] hover:text-white"
-            }`}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
-
-      {/* 🩻 ডাক্তারদের লিস্ট গ্রিড */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-        {filteredDoctors.length > 0 ? (
-          filteredDoctors.map((doctor) => (
-            <div
-              key={doctor.id}
-              className="bg-[#090D16] border border-white/[0.06] rounded-2xl p-5 flex flex-col justify-between hover:border-blue-500/30 transition-all group relative overflow-hidden"
+        {/* Loop Grid / Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {doctors.map((doctor, index) => (
+            <div 
+              key={index} 
+              className="bg-[#090D16] rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-white/[0.06] flex flex-col justify-between overflow-hidden"
             >
-              <div className="flex gap-4">
-                {/* 👤 ডাক্তারের ছবি */}
-                <img
-                  src={doctor.image}
-                  alt={doctor.name}
-                  className="size-16 rounded-xl object-cover border border-white/[0.1] shrink-0"
-                />
-
-                {/* 📝 বিস্তারিত */}
-                <div className="flex flex-col text-left overflow-hidden">
-                  <h3 className="text-sm font-bold text-slate-200 group-hover:text-white transition-colors truncate">
-                    {doctor.name}
-                  </h3>
-
-                  <span className="text-xs font-semibold text-blue-400 mt-0.5 flex items-center gap-1.5">
-                    <FaStethoscope className="size-3" /> {doctor.specialty}
+              <div>
+                {/* Header Image & Verification Badge */}
+                <div className="relative h-60 w-full bg-gray-900">
+                  <img 
+                    src={doctor.profileImage || "https://via.placeholder.com/400"} 
+                    alt={doctor.doctorName}
+                    className="w-full h-full object-cover object-top"
+                  />
+                  <span className={`absolute top-4 right-4 text-xs font-semibold px-3 py-1 rounded-full text-white ${
+                    doctor.verificationStatus === "Verified" ? "bg-green-500" : "bg-amber-500"
+                  }`}>
+                    {doctor.verificationStatus || "Verified"}
                   </span>
+                </div>
 
-                  <span className="text-[11px] text-slate-400 mt-1 font-medium">
-                    Experience: {doctor.experience}
-                  </span>
+                {/* Content Area */}
+                <div className="p-6">
+                  {/* Specialization */}
+                  <div className="flex items-center gap-2 text-blue-400 text-xs font-bold uppercase tracking-wide">
+                    <FaHeart />
+                    {doctor.specialization}
+                  </div>
 
-                  <div className="flex items-center gap-1 mt-2 bg-white/[0.02] border border-white/[0.04] w-fit px-2 py-0.5 rounded-lg">
-                    <FaStar className="text-amber-400 size-3" />
-                    <span className="text-[11px] font-bold text-slate-300">
-                      {doctor.rating}
-                    </span>
-                    <span className="text-[10px] text-slate-500">
-                      ({doctor.reviews} reviews)
-                    </span>
+                  {/* Doctor Name & Qualifications */}
+                  <h2 className="text-2xl font-bold text-slate-200 mt-2 hover:text-blue-400 transition-colors cursor-pointer">
+                    {doctor.doctorName}
+                  </h2>
+                  <p className="text-sm text-slate-400 font-medium mt-1 flex items-center gap-1.5">
+                    <FaStethoscope className="text-slate-500" />
+                    {doctor.qualifications}
+                  </p>
+                  
+                  {/* Hospital Info */}
+                  <p className="text-xs text-slate-500 mt-1 pl-5">
+                    {doctor.hospitalName}
+                  </p>
+
+                  <hr className="my-5 border-white/[0.06]" />
+
+                  {/* Info stats (Experience & Fees) */}
+                  <div className="grid grid-cols-2 gap-4 bg-white/[0.02] p-3 rounded-xl text-center mb-4 border border-white/[0.04]">
+                    <div>
+                      <span className="block text-xs text-slate-500 uppercase font-semibold">Experience</span>
+                      <span className="text-sm font-bold text-slate-300">{doctor.experience}</span>
+                    </div>
+                    <div className="border-l border-white/[0.06]">
+                      <span className="block text-xs text-slate-500 uppercase font-semibold">Fees</span>
+                      <span className="text-sm font-bold text-green-400">$ {doctor.consultationFee}</span>
+                    </div>
+                  </div>
+
+                  {/* Available Days */}
+                  <div className="flex items-start gap-2 text-xs text-slate-400 mb-2">
+                    <FaCalendar className="text-blue-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <strong className="text-slate-300">Days:</strong>{" "}
+                      {doctor.availableDays && doctor.availableDays.length > 0 
+                        ? doctor.availableDays.join(", ") 
+                        : "Not specified"}
+                    </div>
+                  </div>
+
+                  {/* Available Slots */}
+                  <div className="flex items-start gap-2 text-xs text-slate-400">
+                    <FaClock className="text-blue-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <strong className="text-slate-300">Slots:</strong>{" "}
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {doctor.availableSlots?.map((slot, sIdx) => (
+                          <span key={sIdx} className="bg-blue-950 text-blue-400 px-2 py-0.5 rounded text-[10px] font-medium border border-blue-900">
+                            {slot}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* 📍 চেম্বার লোকেশন */}
-              <div className="mt-4 pt-3 border-t border-white/[0.04] flex items-start gap-2 text-slate-400 text-[11px]">
-                <FaMapMarkerAlt className="text-slate-500 mt-0.5 shrink-0 size-3" />
-                <span className="truncate">{doctor.location}</span>
+              {/* 📅 Card Footer Button (Next.js Link কম্পোনেন্ট ব্যবহার করা হয়েছে) */}
+              <div className="p-6 pt-0">
+                <Link
+                  href={`/find-doctors/${index}`} 
+                  className="w-full block text-center bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-3 rounded-xl transition-all duration-200 active:scale-[0.98] cursor-pointer"
+                >
+                  Request Appointment
+                </Link>
               </div>
 
-              {/* 📅 বুকিং বাটন */}
-              <button className="w-full bg-blue-600/10 hover:bg-blue-600 text-blue-400 hover:text-white font-bold text-xs py-2.5 rounded-xl transition-all duration-200 mt-4 cursor-pointer border border-blue-500/20 hover:border-transparent active:scale-[0.98]">
-                Book Appointment
-              </button>
             </div>
-          ))
-        ) : (
-          /* 🔍 ডাক্তার না পাওয়া গেলে */
-          <div className="col-span-full py-12 text-center bg-[#090D16] border border-white/[0.06] rounded-2xl">
-            <FaUserMd className="mx-auto text-slate-600 size-10 mb-3" />
-            <h3 className="text-sm font-bold text-slate-300">
-              No Doctors Found
-            </h3>
-            <p className="text-xs text-slate-500 mt-1">
-              Try searching for a different name or specialty.
-            </p>
-          </div>
-        )}
+          ))}
+        </div>
+
       </div>
     </div>
   );
-};
-
-export default FindDoctorPage;
+}
