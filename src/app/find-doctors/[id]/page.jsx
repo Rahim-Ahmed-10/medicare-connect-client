@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
-// Turbopack এর সেফটি এবং এরর এড়াতে স্ট্যান্ডার্ড ও ইউনিভার্সাল আইকন ব্যবহার করা হয়েছে
+// স্ট্যান্ডার্ড ও ইউনিভার্সাল আইকন
 import { 
   FaChevronLeft, 
   FaStethoscope, 
@@ -38,13 +38,60 @@ export default function DoctorDetailsPage() {
             setSelectedSlot(data[doctorIndex].availableSlots[0]);
           }
         }
-        setIsLoading(false)
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error loading doctor details:", error);
         setIsLoading(false);
       });
   }, [params.id]);
+
+  // 🚀 ১. ব্রাউজার কনসোলে ডাটা প্রিন্ট এবং স্ট্রাইপ চেকআউটে পাঠানো
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // পেজ রিলোড বন্ধ করবে
+
+    if (!selectedDate || !selectedSlot) {
+      alert("Please select both Date and Slot!");
+      return;
+    }
+
+    // আপনার প্রয়োজনীয় ডাটা অবজেক্ট
+    const bookingPayload = {
+      doctorName: doctor?.doctorName || "Unknown Doctor",
+      specialty: doctor?.specialization || "General Specialist",
+      consultationFee: doctor?.consultationFee || "130",
+      appointmentDate: selectedDate,
+      selectedSlot: selectedSlot,
+      symptomsDescription: symptoms || "No symptoms logged."
+    };
+
+    // 🔥 ব্রাউজারের F12 কনসোলে ডাটা চকচক করবে এখন!
+    console.log("🎯 Form Submitted! Booking Payload:", bookingPayload);
+
+    // ২. এপিআই এর মাধ্যমে স্ট্রাইপ সেশন তৈরি করা
+    try {
+      const response = await fetch("/api/subscription", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookingPayload),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.url) {
+        console.log("🔄 Redirecting to Stripe:", data.url);
+        window.location.href = data.url; // স্ট্রাইপ পেমেন্ট পেজে নিয়ে যাবে
+      } else {
+        console.error("❌ Backend error response:", data);
+        alert(data.error || "Failed to initiate payment session.");
+      }
+    } catch (error) {
+      console.error("❌ Network Request Error:", error);
+      alert("Something went wrong. Please check your terminal/console.");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -176,32 +223,23 @@ export default function DoctorDetailsPage() {
 
             <hr className="border-slate-200" />
 
-            {/* Booking Handler Form */}
-            <form action="/api/subscription" method="POST" className="space-y-4">
+            {/* 🔄 onSubmit হ্যান্ডলার যুক্ত ফর্ম */}
+            <form onSubmit={handleSubmit} className="space-y-4">
               
-              <input type="hidden" name="doctorName" value={doctor.doctorName} />
-              <input type="hidden" name="consultationFee" value={doctor.consultationFee} />
-              <input type="hidden" name="selectedSlot" value={selectedSlot} />
-
               {/* Date Config */}
-            <div className="space-y-1.5">
-  <label className="flex items-center gap-1 text-[11px] font-bold text-slate-700 tracking-wider uppercase">
-    <FaCalendarAlt className="text-indigo-600" /> Select Date Target
-  </label>
-  <input 
-    type="date"
-    required
-    name="appointmentDate"
-    value={selectedDate}
-    onChange={(e) => setSelectedDate(e.target.value)}
-    className="w-full bg-slate-50 hover:bg-slate-100/70 border-2 border-slate-300 focus:border-indigo-600 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-indigo-600/10 transition-all text-slate-900 placeholder-slate-500
-    [&::-webkit-calendar-picker-indicator]:opacity-100 
-    [&::-webkit-calendar-picker-indicator]:cursor-pointer 
-    [&::-webkit-calendar-picker-indicator]:filter 
-    [&::-webkit-calendar-picker-indicator]:invert-[10%] 
-    [&::-webkit-calendar-picker-indicator]:hover:scale-110"
-  />
-</div>
+              <div className="space-y-1.5">
+                <label className="flex items-center gap-1 text-[11px] font-bold text-slate-700 tracking-wider uppercase">
+                  <FaCalendarAlt className="text-indigo-600" /> Select Date Target
+                </label>
+                <input 
+                  type="date"
+                  required
+                  name="appointmentDate"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  className="w-full bg-slate-50 hover:bg-slate-100/70 border-2 border-slate-300 focus:border-indigo-600 rounded-xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-4 focus:ring-indigo-600/10 transition-all text-slate-900"
+                />
+              </div>
 
               {/* Custom Radio/Grid Dynamic Time Selector */}
               <div className="space-y-1.5">
@@ -251,7 +289,6 @@ export default function DoctorDetailsPage() {
             </form>
 
           </div>
-
         </div>
 
       </div>

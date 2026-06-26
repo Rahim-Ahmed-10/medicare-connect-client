@@ -1,0 +1,32 @@
+
+"use server" // 👈 এটি অবশ্যই "use server" হতে হবে!
+
+export const subscription = async (data) => {
+  // সার্ভার সাইডে ব্যবহারের জন্য NEXT_PUBLIC_BASE_URL অথবা সরাসরি লোকালহোস্ট ফলব্যাক
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8085"
+  
+  try {
+    const targetUrl = `${baseUrl.replace(/\/$/, '')}/subscription`
+    console.log("🚀 Server Action hitting endpoint:", targetUrl)
+
+    const res = await fetch(targetUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+
+    if (!res.ok) {
+      const errorText = await res.text()
+      console.error("Express Server Error:", errorText)
+      return { success: false, error: `Backend status: ${res.status}` }
+    }
+
+    const resData = await res.json()
+    return resData
+  } catch (error) {
+    console.error("🚨 Connection to Express failed:", error.message)
+    return { success: false, error: error.message }
+  }
+}

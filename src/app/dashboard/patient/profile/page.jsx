@@ -1,0 +1,11 @@
+import React from 'react';
+
+const PatientProfilePage = () => {
+    return (
+        <div>
+            <h2>Patient Profile</h2>
+        </div>
+    );
+};
+
+export default PatientProfilePage;

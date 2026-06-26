@@ -38,7 +38,7 @@ export default function Hero() {
             {/* Call-to-Action (CTA) Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
               <Link 
-                href="/doctors" 
+                href="/find-doctors" 
                 className="w-full sm:w-auto text-center bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-xl shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all cursor-pointer transform hover:-translate-y-0.5 active:translate-y-0"
               >
                 Find a Doctor
