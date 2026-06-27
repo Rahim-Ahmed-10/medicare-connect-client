@@ -1,6 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { usePathname } from "next/navigation";
 
 // গ্র্যাভিটি-র নিজস্ব ভ্যালিড আইকন
 import { Bell, Envelope, Gear, House } from "@gravity-ui/icons";
@@ -18,79 +19,39 @@ import {
   FaUserInjured,
   FaFileMedical,
   FaCalendarCheck,
-  FaHeartbeat,
 } from "react-icons/fa";
 
-export default async function DashboardSidebar() {
-  // 1. 🔐 সার্ভার সাইড থেকে সেশন ডাটা ফেচ করা হলো
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+// ক্লায়েন্ট কম্পোনেন্টে সেশন ডাটা প্রপস আকারে পাস করা সবচেয়ে নিরাপদ ও স্ট্যান্ডার্ড প্র্যাকটিস
+export default function DashboardSidebar({ session }) {
+  const pathname = usePathname();
 
   const user = session?.user;
   const userRole = session?.user?.role || "patient";
 
-  // 2. 🛠️ রোল বেসড ড্যাশবোর্ড আইটেম
+  // রোল বেসড ড্যাশবোর্ড আইটেম
   const dashboardItems = {
     admin: [
       { icon: House, label: "Home", link: "/dashboard/admin" },
       { icon: FaUserMd, label: "Doctors", link: "/dashboard/admin/doctors" },
-      {
-        icon: FaUserInjured,
-        label: "Patients",
-        link: "/dashboard/admin/patients",
-      },
-      {
-        icon: FaFileMedical,
-        label: "Reports",
-        link: "/dashboard/admin/reports",
-      },
+      { icon: FaUserInjured, label: "Patients", link: "/dashboard/admin/patients" },
+      { icon: FaFileMedical, label: "Reports", link: "/dashboard/admin/reports" },
       { icon: Bell, label: "Alerts", link: "/dashboard/admin/notifications" },
       { icon: Gear, label: "Settings", link: "/dashboard/admin/settings" },
     ],
     doctor: [
       { icon: House, label: "Home", link: "/dashboard/doctor" },
-      {
-        icon: FaCalendarCheck,
-        label: "Appts",
-        link: "/dashboard/doctor/appointments",
-      },
-      {
-        icon: FaUserInjured,
-        label: "Patients",
-        link: "/dashboard/doctor/patients",
-      },
-      {
-        icon: FaFileMedical,
-        label: "Presc",
-        link: "/dashboard/doctor/prescriptions",
-      },
+      { icon: FaCalendarCheck, label: "Appts", link: "/dashboard/doctor/appointments" },
+      { icon: FaUserInjured, label: "Patients", link: "/dashboard/doctor/patients" },
+      { icon: FaFileMedical, label: "Presc", link: "/dashboard/doctor/prescriptions" },
       { icon: Envelope, label: "Messages", link: "/dashboard/doctor/messages" },
       { icon: Gear, label: "Settings", link: "/dashboard/doctor/settings" },
     ],
     patient: [
       { icon: FaRegCheckCircle, label: "Overview", link: "/dashboard/patient" },
-      { icon: FaUserMd, label: "Find Doc", link: "/find-doctors" },
-      {
-        icon: FaRegCalendarAlt,
-        label: "My Appointments",
-        link: "/dashboard/patient/bookings",
-      },
-      {
-        icon: FaRegCreditCard,
-        label: "Payments History",
-        link: "/dashboard/patient/payments",
-      },
-      {
-        icon: FaRegStar,
-        label: "Feedback Reviews",
-        link: "/dashboard/patient/reviews",
-      },
-      {
-        icon: FaRegUser,
-        label: "My Profile",
-        link: "/dashboard/patient/profile",
-      },
+      { icon: FaRegCalendarAlt, label: "My Appointments", link: "/dashboard/patient/bookings" },
+      { icon: FaRegCreditCard, label: "Payments History", link: "/dashboard/patient/payments" },
+      { icon: FaRegStar, label: "Feedback Reviews", link: "/dashboard/patient/reviews" },
+      { icon: FaRegUser, label: "My Profile", link: "/dashboard/patient/profile" },
     ],
   };
 
@@ -98,8 +59,9 @@ export default async function DashboardSidebar() {
 
   return (
     <>
-      {/* 💻 ডেস্কটপ সাইডবার (শুধুমাত্র বড় স্ক্রিনে দেখাবে - lg:block) */}
+      {/* 💻 ডেস্কটপ সাইডবার (lg:block) */}
       <aside className="hidden w-64 shrink-0 border-r border-white/[0.06] bg-[#090D16] p-4.5 lg:block h-screen sticky top-0">
+        
         {/* লোগো সেকশন */}
         <div className="flex items-center gap-3 select-none mb-6 px-1">
           <div className="flex size-9.5 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 text-white shadow-lg shadow-blue-500/20">
@@ -113,7 +75,7 @@ export default async function DashboardSidebar() {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M19 10.5V20a2 2 0 01-2 2H7a2 2 0 01-2-2v-9.5m14 0a2 2 0 00-3-1.7l-4.3 2.5a2 2 0 01-2.2 0L5.3 8.8a2 2 0 00-3 1.7m16 0V6a2 2 0 00-2-2H7a2 2 0 00-2 2v4.5m14 0h-3.5a1.5 1.5 0 01-1.5-1.5V6"
+                d="M19 10.5V20a2 2 0 01-2 2H7a2 2 0 01-2 2v-9.5m14 0a2 2 0 00-3-1.7l-4.3 2.5a2 2 0 01-2.2 0L5.3 8.8a2 2 0 00-3 1.7m16 0V6a2 2 0 00-2-2H7a2 2 0 00-2 2v4.5m14 0h-3.5a1.5 1.5 0 01-1.5-1.5V6"
               />
             </svg>
           </div>
@@ -147,37 +109,64 @@ export default async function DashboardSidebar() {
         {/* লিংক লিস্ট */}
         <div className="h-[calc(100vh-160px)] overflow-y-auto no-scrollbar">
           <nav className="flex flex-col gap-2 w-full">
-            {currentNavItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.link}
-                className="group flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold transition-all duration-200 relative cursor-pointer overflow-hidden text-slate-400 hover:bg-white/[0.04] hover:text-white"
-              >
-                <div className="flex items-center gap-3.5 z-10 text-left">
-                  <item.icon className="size-4.5 transition-transform duration-200 group-hover:scale-105 text-slate-400 group-hover:text-blue-400" />
-                  <span className="tracking-wide ml-1">{item.label}</span>
-                </div>
-                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-              </Link>
-            ))}
+            {currentNavItems.map((item) => {
+              // 🎯 বর্তমান রুট এবং লিংকের পাথ মিলছে কিনা তা যাচাই (Active Check)
+              const isActive = pathname === item.link;
+
+              return (
+                <Link
+                  key={item.label}
+                  href={item.link}
+                  className={`group flex items-center justify-between rounded-xl px-4 py-3 text-sm font-bold transition-all duration-200 relative cursor-pointer overflow-hidden ${
+                    isActive 
+                      ? "bg-white/[0.06] text-white" 
+                      : "text-slate-400 hover:bg-white/[0.04] hover:text-white"
+                  }`}
+                >
+                  <div className="flex items-center gap-3.5 z-10 text-left">
+                    <item.icon 
+                      className={`size-4.5 transition-transform duration-200 group-hover:scale-105 ${
+                        isActive ? "text-blue-400" : "text-slate-400 group-hover:text-blue-400"
+                      }`} 
+                    />
+                    <span className="tracking-wide ml-1">{item.label}</span>
+                  </div>
+
+                  {/* ⚡ অ্যাক্টিভ ইন্ডিকেটর বার (বাম পাশে একটি মার্জিত গ্লো লাইন) */}
+                  {isActive && (
+                    <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-blue-500 to-indigo-500 rounded-r-md" />
+                  )}
+                  
+                  <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                </Link>
+              );
+            })}
           </nav>
         </div>
       </aside>
 
-      {/* 📱 মোবাইল বটম নেভিগেশন (ছোট স্ক্রিনে নিচে ফিক্সড থাকবে - lg:hidden) */}
+      {/* 📱 মোবাইল বটম নেভিগেশন (lg:hidden) */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#090D16]/95 backdrop-blur-lg border-t border-white/[0.06] px-2 py-2 flex items-center justify-around shadow-2xl">
-        {currentNavItems.slice(0, 5).map((item) => (
-          <Link
-            key={item.label}
-            href={item.link}
-            className="flex flex-col items-center justify-center gap-1.5 px-2 py-1 rounded-xl text-slate-400 hover:text-blue-400 active:scale-95 transition-all w-16"
-          >
-            <item.icon className="size-5" />
-            <span className="text-[10px] font-medium tracking-tight text-center truncate w-full">
-              {item.label}
-            </span>
-          </Link>
-        ))}
+        {currentNavItems.slice(0, 5).map((item) => {
+          const isActive = pathname === item.link;
+
+          return (
+            <Link
+              key={item.label}
+              href={item.link}
+              className={`flex flex-col items-center justify-center gap-1.5 px-2 py-1 rounded-xl active:scale-95 transition-all w-16 ${
+                isActive ? "text-blue-400" : "text-slate-400 hover:text-blue-400"
+              }`}
+            >
+              <item.icon className="size-5" />
+              <span className={`text-[10px] tracking-tight text-center truncate w-full ${
+                isActive ? "font-bold text-blue-400" : "font-medium"
+              }`}>
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
       </nav>
     </>
   );

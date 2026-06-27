@@ -3,7 +3,7 @@ import React from 'react';
 const MyAppointmentsPage = () => {
     return (
         <div>
-            boss
+           hello
         </div>
     );
 };

@@ -7,18 +7,18 @@ import {
   FaMoneyBillWave, 
   FaRegCheckCircle, 
   FaStethoscope, 
-  FaTrashAlt, 
   FaFileAlt, 
   FaStar,
-  FaClock
+  FaClock,
+  FaShieldAlt
 } from "react-icons/fa";
-import { authClient } from "@/lib/auth-client"; // 👈 আপনার Better Auth ক্লায়েন্ট পাথ নিশ্চিত করুন
+import { authClient } from "@/lib/auth-client";
 
 export default function PatientDashboard() {
   const [appointments, setAppointments] = useState([]);
+  const [reviewCount, setReviewCount] = useState(0); 
   const [loading, setLoading] = useState(true);
   
-  // Better Auth ক্লায়েন্ট সেশন থেকে ডাইনামিক ইউজার ডাটা নেওয়া হচ্ছে
   const { data: session, isPending } = authClient.useSession();
   const userEmail = session?.user?.email;
 
@@ -27,7 +27,6 @@ export default function PatientDashboard() {
   const loadBookings = async () => {
     if (!userEmail) return;
     try {
-      setLoading(true);
       const res = await fetch(`${serverBaseUrl}/api/bookings?email=${userEmail}`);
       const result = await res.json();
       if (result.success) {
@@ -35,44 +34,43 @@ export default function PatientDashboard() {
       }
     } catch (error) {
       console.error("Error fetching bookings:", error);
-    } finally {
-      setLoading(false);
+    }
+  };
+
+  const loadReviewCount = async () => {
+    if (!userEmail) return;
+    try {
+      const res = await fetch(`${serverBaseUrl}/api/reviews/count?email=${userEmail}`);
+      const result = await res.json();
+      if (result.success) {
+        setReviewCount(result.count || 0);
+      }
+    } catch (error) {
+      console.error("Error fetching review count:", error);
     }
   };
 
   useEffect(() => {
-    if (userEmail) {
-      loadBookings();
-    } else if (!isPending && !userEmail) {
-      setLoading(false);
-    }
+    const initDashboard = async () => {
+      if (userEmail) {
+        setLoading(true);
+        await Promise.all([loadBookings(), loadReviewCount()]); 
+        setLoading(false);
+      } else if (!isPending && !userEmail) {
+        setLoading(false);
+      }
+    };
+    initDashboard();
   }, [userEmail, isPending]);
 
-  const handleCancelBooking = async (id) => {
-    const isConfirm = window.confirm("Are you sure you want to cancel this appointment?");
-    if (!isConfirm) return;
-
-    try {
-      const res = await fetch(`${serverBaseUrl}/api/bookings/${id}`, { method: "DELETE" });
-      const result = await res.json();
-      if (result.success) {
-        setAppointments((prev) => prev.filter((item) => item._id !== id));
-        alert("Appointment canceled successfully.");
-      }
-    } catch (error) {
-      console.error("Error deleting booking:", error);
-    }
-  };
-
-  // স্ট্যাটস ক্যালকুলেশন (স্টাইলিশ গ্রিডের জন্য)
   const totalFees = appointments.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
 
   if (isPending || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F4F7F6]">
+      <div className="min-h-screen flex items-center justify-center bg-[#070a13]">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
-          <div className="font-sans font-medium text-slate-500 text-sm">Loading control panel info...</div>
+          <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(59,130,246,0.4)]"></div>
+          <div className="text-xs font-semibold text-slate-400 tracking-wider uppercase">Loading Workspace...</div>
         </div>
       </div>
     );
@@ -80,149 +78,168 @@ export default function PatientDashboard() {
 
   if (!userEmail) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F4F7F6] font-sans p-4">
-        <div className="bg-white p-8 rounded-2xl border border-slate-200 text-center max-w-sm shadow-sm">
-          <p className="text-sm font-semibold text-slate-600">Please log in to your patient account.</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#070a13] p-4">
+        <div className="bg-[#0f172a] p-8 rounded-2xl border border-slate-800 text-center max-w-sm shadow-xl">
+          <p className="text-sm font-medium text-slate-300">Please log in to your patient account.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F7F6] p-4 sm:p-8 font-sans text-slate-800">
-      <div className="max-w-6xl mx-auto space-y-6">
+    // 🎨 image_6fa16b.png এর সাথে ম্যাচিং মডার্ন ডার্ক ব্যাকগ্রাউন্ড থিম
+    <div className="min-h-screen bg-[#070a13] p-4 sm:p-6 lg:p-8 font-sans text-slate-200 antialiased">
+      <div className="max-w-7xl mx-auto">
         
-        {/* 🌿 ১. Welcome Banner (রেফারেন্স ইমেজের মতো) */}
-        <div className="bg-[#2D6A4F] text-white p-6 sm:p-8 rounded-2xl shadow-sm relative overflow-hidden">
-          <div className="relative z-10 space-y-2 max-w-xl">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              Welcome back, {session?.user?.name || "Patient"}! 👋
-            </h1>
-            <p className="text-emerald-100/90 text-xs sm:text-sm leading-relaxed">
-              Access real-time schedules, view medical records, coordinate with top clinicians, and manage payments securely.
-            </p>
-          </div>
-          {/* ব্যাকগ্রাউন্ড শ্যাডো ইফেক্ট */}
-          <div className="absolute right-0 bottom-0 opacity-10 pointer-events-none transform translate-x-10 translate-y-10">
-            <FaRegCheckCircle size={240} />
-          </div>
-        </div>
-
-        {/* 📊 ২. ৪টি স্টাইলিশ স্ট্যাটস কার্ড গ্রিড (Overview Row) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* মেইন ২-কলাম স্প্লিট লেআউট */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
-          {/* কার্ড ১: মোট বুকিং */}
-          <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0">
-              <FaCalendarAlt />
+          {/* 📌 বাম পাশের সেকশন: প্রোফাইল ও অ্যাকাউন্ট ওভারভিউ */}
+          <div className="lg:col-span-4 space-y-4">
+            
+            {/* ওয়েলকাম প্যানেল */}
+            <div className="bg-[#0f172a] p-6 rounded-2xl border border-slate-800/80 shadow-lg relative overflow-hidden">
+              <div className="absolute -right-6 -bottom-6 text-blue-500/5 pointer-events-none">
+                <FaRegCheckCircle size={130} />
+              </div>
+              <div className="relative z-10 space-y-2.5">
+                <span className="text-[10px] bg-blue-500/10 border border-blue-500/20 text-blue-400 font-extrabold uppercase px-2.5 py-1 rounded-md tracking-widest">
+                  Overview Portal
+                </span>
+                <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  Welcome, <span className="text-blue-400">{session?.user?.name || "Patient"}</span>
+                </h1>
+                <p className="text-slate-400 text-xs font-medium truncate">
+                  {userEmail}
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-bold text-slate-900 leading-none">{appointments.length}</h3>
-              <p className="text-[11px] font-medium text-slate-400 mt-1">Upcoming Clinics</p>
-            </div>
-          </div>
 
-          {/* কার্ড ২: হিস্ট্রি / রেকর্ড */}
-          <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0">
-              <FaFileAlt />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-slate-900 leading-none">1</h3>
-              <p className="text-[11px] font-medium text-slate-400 mt-1">Histories & Checkups</p>
-            </div>
-          </div>
-
-          {/* কার্ড ৩: টোটাল ট্রানজেকশন ফিস */}
-          <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shrink-0">
-              <FaMoneyBillWave />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-slate-900 leading-none">${totalFees}</h3>
-              <p className="text-[11px] font-medium text-slate-400 mt-1">Total Transactions</p>
-            </div>
-          </div>
-
-          {/* কার্ড ৪: রিভিউ কাউন্ট */}
-          <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center text-xl shrink-0">
-              <FaStar />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-slate-900 leading-none">2</h3>
-              <p className="text-[11px] font-medium text-slate-400 mt-1">Clinical Reviews</p>
-            </div>
-          </div>
-
-        </div>
-
-        {/* 🗓️ ৩. ক্লিন ও প্রফেশনাল আপকামিং কনসালটেশন লিস্ট */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-          <div className="p-5 border-b border-slate-100">
-            <h2 className="text-base font-bold text-slate-900">Upcoming Consultations</h2>
-          </div>
-
-          {appointments.length === 0 ? (
-            <div className="p-12 text-center text-slate-400 text-sm">
-              No clinical visits registered on your server registry.
-            </div>
-          ) : (
-            <div className="divide-y divide-slate-100">
-              {appointments.map((appointment) => (
-                <div 
-                  key={appointment._id} 
-                  className="p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-slate-50/60 transition-colors"
-                >
-                  {/* ডাক্তার ও স্পেশালিস্ট ইনফো */}
-                  <div className="flex gap-4 items-center">
-                    <div className="w-11 h-11 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 border border-slate-200/60 text-lg shrink-0">
-                      <FaUserMd />
-                    </div>
-                    <div className="space-y-0.5">
-                      <h4 className="font-bold text-slate-900 text-sm">{appointment.doctorName}</h4>
-                      <p className="text-xs text-slate-400 flex items-center gap-1">
-                        <FaStethoscope className="text-[10px]" /> {appointment.specialty}
-                      </p>
-                    </div>
+            {/* অ্যাকাউন্ট ওভারভিউ কাউন্টার (ভার্টিক্যাল লিস্ট স্টাইল) */}
+            <div className="bg-[#0f172a] rounded-2xl border border-slate-800/80 p-5 space-y-3.5 shadow-lg">
+              <h3 className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Metrics Ledger</h3>
+              
+              {/* মেট্রিফ ১: আপকামিং সেশন */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#111a31] border border-slate-800/60">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-sm">
+                    <FaCalendarAlt />
                   </div>
-
-                  {/* তারিখ ও সময় */}
-                  <div className="flex flex-wrap sm:flex-nowrap gap-4 text-xs font-medium text-slate-600 w-full sm:w-auto">
-                    <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200/40">
-                      <FaCalendarAlt className="text-slate-400" />
-                      <span>{appointment.date}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200/40">
-                      <FaClock className="text-slate-400" />
-                      <span>{appointment.time}</span>
-                    </div>
-                  </div>
-
-                  {/* ফি, স্ট্যাটাস এবং অ্যাকশন বাটন */}
-                  <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
-                    <div className="text-right">
-                      <span className="text-[10px] block uppercase tracking-wider text-slate-400 font-bold">Fee paid</span>
-                      <strong className="text-slate-900 text-sm">${appointment.amount || "10"} USD</strong>
-                    </div>
-
-                    <span className="bg-amber-50 text-amber-700 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border border-amber-200/60">
-                      {appointment.status || "Pending"}
-                    </span>
-
-                    <button
-                      onClick={() => handleCancelBooking(appointment._id)}
-                      className="text-slate-400 hover:text-rose-600 p-2 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                      title="Cancel Appointment"
-                    >
-                      <FaTrashAlt size={14} />
-                    </button>
-                  </div>
-
+                  <span className="text-xs font-semibold text-slate-300">Upcoming Clinics</span>
                 </div>
-              ))}
+                <span className="text-sm font-bold text-white bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700">{appointments.length}</span>
+              </div>
+
+              {/* মেট্রিফ ২: হিস্টোরি */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#111a31] border border-slate-800/60">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm">
+                    <FaFileAlt />
+                  </div>
+                  <span className="text-xs font-semibold text-slate-300">Medical Logs</span>
+                </div>
+                <span className="text-sm font-bold text-white bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700">1</span>
+              </div>
+
+              {/* মেট্রিফ ৩: টোটাল ফি */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#111a31] border border-slate-800/60">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm">
+                    <FaMoneyBillWave />
+                  </div>
+                  <span className="text-xs font-semibold text-slate-300">Total Payments</span>
+                </div>
+                <span className="text-sm font-bold text-emerald-400 bg-emerald-950/30 px-2 py-0.5 rounded-md border border-emerald-800/40">${totalFees}</span>
+              </div>
+
+              {/* মেট্রিফ ৪: রিভিউ */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#111a31] border border-slate-800/60">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-sm">
+                    <FaStar />
+                  </div>
+                  <span className="text-xs font-semibold text-slate-300">Submitted Reviews</span>
+                </div>
+                <span className="text-sm font-bold text-white bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700">{reviewCount}</span>
+              </div>
+
             </div>
-          )}
+
+            {/* সিকিউরিটি ইনফো বক্স */}
+            <div className="bg-blue-950/20 border border-blue-900/40 p-4 rounded-xl flex gap-3 items-start">
+              <FaShieldAlt className="text-blue-400 shrink-0 mt-0.5 text-xs" />
+              <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                Your clinical records are safeguarded with end-to-end cloud encryption layers.
+              </p>
+            </div>
+
+          </div>
+
+          {/* 🗓️ ডান পাশের সেকশন: লাইভ কনসালটেশন শিডিউল টাইমলাইন */}
+          <div className="lg:col-span-8 bg-[#0f172a] rounded-2xl border border-slate-800/80 shadow-lg overflow-hidden">
+            <div className="p-5 border-b border-slate-800 bg-[#111a31]/40 flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+              <h2 className="text-sm font-bold text-white uppercase tracking-wider">Live Consultation Schedule</h2>
+            </div>
+
+            {appointments.length === 0 ? (
+              <div className="p-16 text-center text-slate-500 text-sm font-medium tracking-wide">
+                No appointment logs or sessions linked with this profile.
+              </div>
+            ) : (
+              <div className="p-6 space-y-6">
+                {appointments.map((appointment, index) => (
+                  <div key={appointment._id} className="relative flex gap-4 items-start group">
+                    
+                    {/* টাইমলাইন ডট ও লাইন */}
+                    <div className="flex flex-col items-center h-full pt-1.5 shrink-0">
+                      <div className="w-3 h-3 rounded-full bg-blue-500 border-2 border-[#0f172a] ring-4 ring-blue-950/40 transition-all group-hover:ring-blue-900/60"></div>
+                      {index !== appointments.length - 1 && (
+                        <div className="w-[1px] bg-slate-800 group-hover:bg-slate-700 h-24 mt-2 transition-colors"></div>
+                      )}
+                    </div>
+
+                    {/* মেইন কার্ড কন্টেইনার (image_6fa16b.png এর ডিজাইন অনুযায়ী তৈরি) */}
+                    <div className="flex-1 bg-[#111a31]/40 hover:bg-[#111a31]/80 p-5 rounded-xl border border-slate-800/80 transition-all flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                      
+                      {/* ডাক্তার প্রোফাইল ও টাইটেল */}
+                      <div className="flex gap-3 items-center">
+                        <div className="w-10 h-10 rounded-xl bg-[#0f172a] text-blue-400 border border-slate-800 flex items-center justify-center text-base shrink-0 shadow-inner">
+                          <FaUserMd />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-white text-sm tracking-wide">{appointment.doctorName}</h4>
+                          <p className="text-[10px] text-blue-400 flex items-center gap-1 mt-0.5 font-extrabold uppercase tracking-widest">
+                            <FaStethoscope className="text-[9px]" /> {appointment.specialty}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* তারিখ, সময় এবং স্ট্যাটাস ক্যাপসুল */}
+                      <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                        <div className="flex items-center gap-2.5 text-xs text-slate-300 font-medium">
+                          <span className="flex items-center gap-1.5 bg-[#0f172a] px-2.5 py-1.5 rounded-lg border border-slate-800">
+                            <FaCalendarAlt className="text-slate-500 text-[10px]" /> {appointment.date}
+                          </span>
+                          <span className="flex items-center gap-1.5 bg-[#0f172a] px-2.5 py-1.5 rounded-lg border border-slate-800">
+                            <FaClock className="text-slate-500 text-[10px]" /> {appointment.time}
+                          </span>
+                        </div>
+                        
+                        {/* নিয়ন কনফার্মড/পেন্ডিং স্ট্যাটাস ব্যাজ */}
+                        <span className="bg-[#052e16]/30 text-[#4ade80] text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-md border border-[#15803d]/30 shadow-[0_0_10px_rgba(74,222,128,0.05)]">
+                          {appointment.status || "CONFIRMED"}
+                        </span>
+                      </div>
+
+                    </div>
+
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
         </div>
 
       </div>

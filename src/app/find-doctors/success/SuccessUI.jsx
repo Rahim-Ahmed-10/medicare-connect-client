@@ -12,13 +12,14 @@ export default function SuccessUI({ customerEmail, amount, transactionId }) {
   const [countdown, setCountdown] = useState(7); 
 
   // ইউআরএল থেকে স্ট্রাইপ সেশনের মাধ্যমে আসা ডাইনামিক বুকিং ডাটা এক্সট্র্যাক্ট করা হচ্ছে
-  const doctorName = searchParams.get("doctorName") || "Dr. Rahim";
+  const doctorName = searchParams.get("doctorName") || "Dr.Rahim Miah";
   const specialty = searchParams.get("specialty") || "GYNECOLOGIST";
   const date = searchParams.get("date") || "06/10/2026";
   const time = searchParams.get("time") || "03:00 PM";
+  const symptomsDescription = searchParams.get("symptomsDescription") || "NO SymptomsDescription"
 
   // 🎯 ২. ড্যাশবোর্ডের জন্য ডাইনামিক ইউআরএল কুয়েরি স্ট্রিং তৈরি করা হলো
-  const dynamicDashboardUrl = `/dashboard/patient?doctorName=${encodeURIComponent(doctorName)}&specialty=${encodeURIComponent(specialty)}&date=${date}&time=${time}&amount=${amount}`;
+  const dynamicDashboardUrl = `/dashboard/patient?doctorName=${encodeURIComponent(doctorName)}&specialty=${encodeURIComponent(specialty)}&date=${date}&time=${time}&amount=${amount}&symptomsDescription=${symptomsDescription}`;
 
   useEffect(() => {
     // 🎉 কালারফুল কনফেটি ড্রপ অ্যানিমেশন

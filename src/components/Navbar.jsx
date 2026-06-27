@@ -158,7 +158,7 @@ export default function Navbar() {
       {isOpen && (
         <div className="md:hidden border-t border-slate-100 bg-white px-4 pt-2 pb-4 space-y-1.5 font-semibold text-slate-600 shadow-inner">
           <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Home</Link>
-          <Link href="/doctors" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Find Doctors</Link>
+          <Link href="/find-doctors" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Find Doctors</Link>
           <Link href="/about" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">About Us</Link>
           <Link href="/contact" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Contact Us</Link>
           {user && <Link href="/dashboard" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Dashboard</Link>}

@@ -35,6 +35,7 @@ export default async function Success({ searchParams }) {
           date: metadata.appointmentDate,  // 👈 'appointmentDate' মিলিয়ে দেওয়া হলো
           time: metadata.appointmentTime,  // 👈 'appointmentTime' মিলিয়ে দেওয়া হলো
           amount: metadata.amount,
+          symptomsDescription:metadata.symptomsDescription,
         }),
       });
     } catch (dbError) {

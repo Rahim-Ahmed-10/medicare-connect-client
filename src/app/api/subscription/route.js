@@ -10,7 +10,7 @@ export async function POST(request) {
 
     // 📥 ফ্রন্টএন্ড থেকে পাঠানো সম্পূর্ণ ডাটা রিসিভ করা
     const body = await request.json();
-    const { doctorName, specialty, appointmentDate, selectedSlot, consultationFee } = body;
+    const { doctorName, specialty, appointmentDate, selectedSlot, consultationFee, symptomsDescription } = body;
 
     // ইউজার সেশন চেক করা
     const userSession = await auth.api.getSession({
@@ -19,14 +19,13 @@ export async function POST(request) {
 
     const user = userSession?.user;
 
-    // 💰 স্ট্রাইপের সেন্ট (cents) কনভার্সন এবং সেফটি চেক
+    // 💰 স্ট্রাইপের সেন্ট (cents) কনভার্সন এবং সেফটিチェック
     const amountInCents = Math.round(Number(consultationFee || 20) * 100); 
 
-    // 🎯 ইউআরএল কুয়েরি স্ট্রিং তৈরি (সাকসেস পেজে রিড করার জন্য)
-    const queryParams = `doctorName=${encodeURIComponent(doctorName || '')}&specialty=${encodeURIComponent(specialty || '')}&date=${encodeURIComponent(appointmentDate || '')}&time=${encodeURIComponent(selectedSlot || '')}&amount=${consultationFee || '20'}`;
+    // 🎯 ইউআরএল কুয়েরি স্ট্রিং তৈরি (সাকসেস পেজে রিড করার জন্য - এখানে ব্র্যাকেট এবং ভেরিয়েবল ফিক্স করা হয়েছে)
+    const queryParams = `doctorName=${encodeURIComponent(doctorName || '')}&specialty=${encodeURIComponent(specialty || '')}&date=${encodeURIComponent(appointmentDate || '')}&time=${encodeURIComponent(selectedSlot || '')}&symptomsDescription=${encodeURIComponent(symptomsDescription || '')}&amount=${consultationFee || '20'}`;
 
     // Create Checkout Sessions 
-    // 🔥 price_id এর বদলে এখানে dynamic price_data ব্যবহার করা হয়েছে
     const session = await stripe.checkout.sessions.create({
       customer_email: user?.email || undefined,
       line_items: [
@@ -49,9 +48,10 @@ export async function POST(request) {
         specialty: specialty || "",
         appointmentDate: appointmentDate || "",
         appointmentTime: selectedSlot || "",
-        amount: consultationFee || "20"
+        amount: consultationFee || "20",
+        symptomsDescription: symptomsDescription || "" // 👈 এখানে স্ট্রিং বাদে ডাইনামিক ভেরিয়েবল পাস করা হলো
       },
-      mode: 'payment', // 💡 যেহেতু এটি ওয়ান-টাইম অ্যাপয়েন্টমেন্ট ফি, তাই 'subscription' এর বদলে 'payment' ব্যবহার করা বেস্ট প্র্যাকটিস
+      mode: 'payment', 
       success_url: `${origin}/find-doctors/success?session_id={CHECKOUT_SESSION_ID}&${queryParams}`,
       cancel_url: `${origin}/find-doctors`,
     });
