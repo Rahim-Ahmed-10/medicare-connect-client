@@ -9,7 +9,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="max-w-7xl mx-auto flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+    <div className="max-w-7xl mx-auto flex flex-col flex-1 items-center justify-center space-y-23 bg-zinc-50 font-sans dark:bg-black">
      <Hero />
      <FeaturesSection />
      <TestimonialsSection />

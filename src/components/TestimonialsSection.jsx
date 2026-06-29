@@ -1,5 +1,5 @@
 "use client";
-import { FaStar, FaQuoteLeft, FaHeartPulse } from "react-icons/fa6";
+import { FaStar, FaQuoteLeft, FaHeartbeat } from "react-icons/fa"; // 🎯 সব আইকন 'fa' প্যাকেজ থেকে নেওয়া হলো
 
 export default function TestimonialsSection() {
   const reviews = [
@@ -30,36 +30,38 @@ export default function TestimonialsSection() {
   ];
 
   return (
-    <div className="w-full bg-[#818386] pb-16 px-4 sm:px-6 lg:px-8 font-sans">
+    // 🎯 মেইন ব্যাকগ্রাউন্ড আপনার পেজের সাথে মিলিয়ে #0D1527 করা হলো এবং ওপরে-নিচে পর্যাপ্ত প্যাডিং দেওয়া হয়েছে
+    <div className="w-full bg-[#0D1527] py-24 px-4 sm:px-6 lg:px-8 font-sans text-slate-200">
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
-          <div className="inline-flex items-center gap-2 text-[#9A00D7] font-bold text-xs tracking-wide uppercase bg-white/10 px-4 py-2 rounded-full border border-white/20">
-            <FaHeartPulse className="w-4 h-4" />
+        <div className="text-center pt-16 max-w-2xl mx-auto mb-16 space-y-3">
+          {/* ছোট ব্যাজটি ডার্ক পেজের গ্লো থিমে সাজানো */}
+          <div className="inline-flex items-center gap-2 text-purple-400 font-bold text-xs tracking-wide uppercase bg-[#111A31] px-4 py-2 rounded-full border border-purple-900/30">
+            <FaHeartbeat className="w-4 h-4 text-rose-500 animate-pulse" />
             Patient Stories
           </div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-[#0D1B2A] tracking-tight">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
             What Our Patients Say
           </h2>
-          <p className="text-slate-700 text-xs">
+          <p className="text-slate-400 text-xs sm:text-sm font-medium">
             Discover how MediCare Connect is making healthcare accessible and trusted for thousands of families.
           </p>
         </div>
 
         {/* Reviews Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {reviews.map((review) => (
             <div 
               key={review.id} 
-              className="bg-white rounded-[2rem] p-6 shadow-xl border border-slate-100 flex flex-col justify-between relative group hover:shadow-2xl transition-all duration-300"
+              className="bg-gradient-to-b from-[#111A31] to-[#0D1527] rounded-[2.5rem] p-8 shadow-2xl border border-slate-800/60 flex flex-col justify-between relative group hover:border-purple-500/30 transition-all duration-300"
             >
-              {/* Quote Icon */}
-              <div className="absolute top-6 right-6 text-slate-100 group-hover:text-purple-50 transition-colors">
-                <FaQuoteLeft className="w-8 h-8" />
+              {/* Quote Icon - ডার্ক মোডে অপাসিটি কমিয়ে ব্যাকগ্রাউন্ডে সেট করা */}
+              <div className="absolute top-6 right-8 text-slate-800 group-hover:text-purple-500/10 transition-colors">
+                <FaQuoteLeft className="w-10 h-10" />
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-4 relative z-10">
                 {/* Stars */}
                 <div className="flex gap-1">
                   {[...Array(review.rating)].map((_, i) => (
@@ -68,23 +70,24 @@ export default function TestimonialsSection() {
                 </div>
 
                 {/* Comment */}
-                <p className="text-slate-600 text-xs leading-relaxed italic">
+                <p className="text-slate-300 text-xs sm:text-sm leading-relaxed italic font-medium">
                   "{review.comment}"
                 </p>
               </div>
 
               {/* User Profile Info */}
-              <div className="flex items-center gap-3 mt-6 pt-4 border-t border-slate-100">
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-slate-100">
+              <div className="flex items-center gap-3 mt-8 pt-5 border-t border-slate-800/80 relative z-10">
+                <div className="w-11 h-11 rounded-full overflow-hidden bg-slate-800 border-2 border-slate-700 group-hover:border-purple-400 transition-colors">
                   <img 
                     src={review.image} 
+                    srcSet={review.image}
                     alt={review.name} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div>
-                  <h4 className="font-bold text-slate-900 text-sm">{review.name}</h4>
-                  <p className="text-slate-400 text-[10px] font-medium">{review.role}</p>
+                  <h4 className="font-bold text-white text-sm group-hover:text-purple-400 transition-colors">{review.name}</h4>
+                  <p className="text-slate-500 text-[11px] font-semibold tracking-wide uppercase mt-0.5">{review.role}</p>
                 </div>
               </div>
             </div>

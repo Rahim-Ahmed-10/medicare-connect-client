@@ -11,6 +11,13 @@ import {
   FaRegCreditCard,
   FaRegStar,
   FaRegUser,
+  FaHeartbeat,
+  FaRegClock,
+  FaUserCog,
+  FaChartBar,
+  FaUsers,
+  FaUserCheck,
+  FaCalendarAlt,
 } from "react-icons/fa";
 
 // মেডিকেল ও রোল ভিত্তিক আইকন
@@ -20,6 +27,8 @@ import {
   FaFileMedical,
   FaCalendarCheck,
 } from "react-icons/fa";
+import { FaDollarSign } from "react-icons/fa6";
+
 
 // 🎯 ফিক্সড: layout.js থেকে পাঠানো role এবং user আলাদাভাবে রিসিভ করা হলো
 export default function DashboardSidebar({ role, user }) {
@@ -30,22 +39,60 @@ export default function DashboardSidebar({ role, user }) {
 
   
   const dashboardItems = {
-    admin: [
-      { icon: House, label: "Home", link: "/dashboard/admin" },
-      { icon: FaUserMd, label: "Doctors", link: "/dashboard/admin/doctors" },
-      { icon: FaUserInjured, label: "Patients", link: "/dashboard/admin/patients" },
-      { icon: FaFileMedical, label: "Reports", link: "/dashboard/admin/reports" },
-      { icon: Bell, label: "Alerts", link: "/dashboard/admin/notifications" },
-      { icon: Gear, label: "Settings", link: "/dashboard/admin/settings" },
-    ],
-    doctor: [
-      { icon: House, label: "Home", link: "/dashboard/doctor" }, // 🎯 লেবেল Home করে দেওয়া হলো যাতে সুন্দর দেখায়
-      { icon: FaCalendarCheck, label: "Appts", link: "/dashboard/doctor/appointments" },
-      { icon: FaUserInjured, label: "Patients", link: "/dashboard/doctor/patients" },
-      { icon: FaFileMedical, label: "Presc", link: "/dashboard/doctor/prescriptions" },
-      { icon: Envelope, label: "Messages", link: "/dashboard/doctor/messages" },
-      { icon: Gear, label: "Settings", link: "/dashboard/doctor/settings" },
-    ],
+   admin: [
+  { 
+    icon: FaChartBar, // 🎯 Ecosystem Analytics এর গ্রাফ/অ্যানালিটিক্স আইকন
+    label: "Ecosystem Analytics", 
+    link: "/dashboard/admin" 
+  },
+  { 
+    icon: FaUsers, // 🎯 Manage User Accounts এর ইউজার্স আইকন
+    label: "Manage User Accounts", 
+    link: "/dashboard/admin/users" 
+  },
+  { 
+    icon: FaUserCheck, // 🎯 Verify Doctor Licenses এর ভেরিফিকেশন আইকন
+    label: "Verify Doctor Licenses", 
+    link: "/dashboard/admin/verify-doctors" 
+  },
+  { 
+    icon: FaCalendarAlt, // 🎯 Clinical Appts Registry এর ক্যালেন্ডার/রেজিস্ট্রি আইকন
+    label: "Clinical Appts Registry", 
+    link: "/dashboard/admin/appointments-registry" 
+  },
+  { 
+    icon: FaDollarSign, // 🎯 Stripe Cash Flows এর ডলার/ক্যাশফ্লো আইকন
+    label: "Stripe Cash Flows", 
+    link: "/dashboard/admin/cash-flows" 
+  },
+],
+   doctor: [
+  { 
+    icon: FaHeartbeat, // 🎯 ইমেজের pulse/pulse-rate আইকনের জন্য
+    label: "Dashboard Overview", 
+    link: "/dashboard/doctor" 
+  },
+  { 
+    icon: FaRegClock, // 🎯 ইমেজের ঘড়ি বা শিডিউল আইকনের জন্য
+    label: "Manage Schedules & Days", 
+    link: "/dashboard/doctor/schedules" 
+  },
+  { 
+    icon: FaCalendarCheck, // 🎯 ইমেজের অ্যাপয়েন্টমেন্ট ইনবক্স (ক্যালেন্ডার) আইকনের জন্য
+    label: "Appointments Inbox", 
+    link: "/dashboard/doctor/appointments" 
+  },
+  { 
+    icon: FaFileMedical, // 🎯 ইমেজের প্রেসক্রিপশন কেবিন (মেডিকেল শিট) আইকনের জন্য
+    label: "Prescriptions Cabin", 
+    link: "/dashboard/doctor/prescriptions" 
+  },
+  { 
+    icon: FaUserCog, // 🎯 ইমেজের প্রোফাইল ক্রেডেনশিয়ালস আইকনের জন্য
+    label: "Profile Credentials", 
+    link: "/dashboard/doctor/profile" 
+  },
+],
     patient: [
       { icon: FaRegCheckCircle, label: "Overview", link: "/dashboard/patient" },
       { icon: FaRegCalendarAlt, label: "My Appointments", link: "/dashboard/patient/bookings" },

@@ -1,112 +1,124 @@
 "use client";
 import Link from "next/link";
 import { 
-  FaVideo, 
-  FaFilePrescription, 
-  FaCapsules, 
-  FaHeartPulse, 
-  FaBaby, 
-  FaBrain, 
-  FaKitMedical, 
-  FaArrowRightLong 
-} from "react-icons/fa6";
+  FaUserShield, 
+  FaBriefcaseMedical, 
+  FaChartLine, 
+  FaArrowRight 
+} from "react-icons/fa"; 
 
 export default function FeaturesSection() {
-  // 1. Quick Action Cards (English Updated)
-  const quickActions = [
+  const highlights = [
     {
-      id: 1,
-      title: "Online Video Call",
-      desc: "Start a live video consultation instantly with experienced and certified doctors.",
-      icon: <FaVideo className="w-6 h-6 text-[#7A1FA2]" />,
-      bg: "bg-purple-50",
-      border: "hover:border-purple-300",
-      link: "/services"
+      title: "Comprehensive Security Vault",
+      desc: "Your data privacy is guarded with multi-layer encryption. Profile information and historical logs stay entirely safe under decentralized registry controls.",
+      icon: <FaUserShield className="w-5 h-5 text-purple-400" />,
     },
     {
-      id: 2,
-      title: "E-Prescription",
-      desc: "Get your digital medical prescription in your dashboard right after the session ends.",
-      icon: <FaFilePrescription className="w-6 h-6 text-blue-600" />,
-      bg: "bg-blue-50",
-      border: "hover:border-blue-300",
-      link: "/services"
+      title: "Integrated Prescription Cabin",
+      desc: "Instantly fetch authentic digital prescriptions generated straight from the clinical supervisor panels right onto your active viewport.",
+      icon: <FaBriefcaseMedical className="w-5 h-5 text-cyan-400" />,
     },
     {
-      id: 3,
-      title: "Medicine Delivery",
-      desc: "Order prescribed medicines directly to your doorstep with our hassle-free service.",
-      icon: <FaCapsules className="w-6 h-6 text-emerald-600" />,
-      bg: "bg-emerald-50",
-      border: "hover:border-emerald-300",
-      link: "/services"
-    }
-  ];
-
-  // 2. Specialized Departments (English Updated)
-  const departments = [
-    { name: "Cardiology", subtitle: "Heart Care", icon: <FaHeartPulse className="w-5 h-5 text-red-500" /> },
-    { name: "Pediatrics", subtitle: "Child Care", icon: <FaBaby className="w-5 h-5 text-amber-500" /> },
-    { name: "Neurology", subtitle: "Brain & Nerve", icon: <FaBrain className="w-5 h-5 text-indigo-500" /> },
-    { name: "General Health", subtitle: "Primary Care", icon: <FaKitMedical className="w-5 h-5 text-teal-500" /> },
+      title: "Live Server Log Synced",
+      desc: "Experience zero latency. Scheduling shifts, appointments status updates, and doctor validations process seamlessly via automated ecosystem channels.",
+      icon: <FaChartLine className="w-5 h-5 text-emerald-400" />,
+    },
   ];
 
   return (
-    <div className="w-full bg-[#818386] pt-10 pb-16 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-7xl mx-auto space-y-12">
+    // 🎯 থিমের ব্যাকগ্রাউন্ড কালার (#0D1527) ফিক্সড রাখা হয়েছে
+    <div className="w-full bg-[#0D1527] pb-24 px-4 sm:pt-36 sm:px-6 lg:px-8 font-sans text-slate-200">
+      <div className="max-w-7xl mx-auto">
         
-        {/* ⚡ 1. Quick Action Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {quickActions.map((action) => (
-            <Link 
-              href={action.link} 
-              key={action.id} 
-              className={`bg-white rounded-[2rem] p-6 shadow-xl border-2 border-transparent ${action.border} transition-all duration-300 flex flex-col justify-between group cursor-pointer`}
-            >
-              <div className="space-y-4">
-                <div className={`w-12 h-12 rounded-2xl ${action.bg} flex items-center justify-center shadow-sm`}>
-                  {action.icon}
+        {/* মেইন স্প্লিট গ্রিড */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-16">
+          
+          {/* 💻 বামপাশ: ৫ কলাম জুড়ে প্রিমিয়াম ভিজ্যুয়াল প্রিভিউカード */}
+          <div className="lg:col-span-5 bg-gradient-to-tr from-[#111A31] via-[#1E293B] to-[#0D1527] p-8 rounded-[3rem] border border-slate-800/80 shadow-2xl relative overflow-hidden group">
+            <div className="absolute -top-12 -left-12 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/20 transition-all"></div>
+            
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] uppercase font-extrabold tracking-widest text-purple-400 bg-purple-950/50 border border-purple-800/30 px-3 py-1 rounded-full">
+                  System Core
+                </span>
+                <div className="flex gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#7A1FA2] transition-colors">
-                  {action.title}
-                </h3>
-                <p className="text-slate-500 text-xs leading-relaxed">
-                  {action.desc}
+              </div>
+
+              <div className="pt-2">
+                <h4 className="text-xl font-black text-white tracking-tight">The Next-Gen Unified Control Panel</h4>
+                <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                  A multi-role administrative system bridging verified doctors, real-time patients registry, and direct executive analytics inside a seamless interface.
                 </p>
               </div>
-              <div className="mt-4 pt-2 flex items-center gap-2 text-xs font-bold text-[#7A1FA2]">
-                Get Service <FaArrowRightLong className="transition-transform duration-200 group-hover:translate-x-1" />
-              </div>
-            </Link>
-          ))}
-        </div>
 
-        {/* 🩺 2. Specialist Departments Section */}
-        <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-xl border border-slate-100">
-          <div className="max-w-2xl mb-8">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Our Specialized Departments
-            </h2>
-            <p className="text-slate-500 text-xs mt-1">
-              Select the appropriate department to connect with the right healthcare specialist.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {departments.map((dept, index) => (
-              <Link 
-                href="/services" 
-                key={index} 
-                className="p-5 rounded-2xl bg-slate-50 border border-slate-200/60 hover:border-purple-300 hover:bg-purple-50/20 transition-all duration-200 text-center flex flex-col items-center justify-center space-y-2 group"
-              >
-                <div className="p-3 bg-white rounded-xl shadow-sm group-hover:scale-110 transition-transform">
-                  {dept.icon}
+              {/* মিনি ড্যাশবোর্ড স্ট্যাট উইজেট */}
+              <div className="bg-[#0D1527]/90 rounded-2xl p-4 border border-slate-800/60 space-y-3">
+                <div className="flex justify-between items-center text-[11px] font-bold text-slate-400">
+                  <span>Server Status</span>
+                  <span className="text-emerald-400 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Operational
+                  </span>
                 </div>
-                <div className="font-bold text-slate-900 text-sm">{dept.name}</div>
-                <div className="text-[11px] font-medium text-slate-400">{dept.subtitle}</div>
+                <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                  {/* 🎨 গ্রাফিকাল বারটিকে ব্র্যান্ড থিম অনুযায়ী ব্যাকগ্রাউন্ড ব্লু কালার টোনে সেট করা হয়েছে */}
+                  <div className="bg-gradient-to-r from-blue-500 to-cyan-400 h-full w-[92%] rounded-full"></div>
+                </div>
+              </div>
+
+              {/* 🎯 Access Gateway বাটন - এটিকে বুকিং বাটনের মেইন ব্র্যান্ড ব্লু (#1B62FD) কালারে ম্যাচ করা হয়েছে */}
+              <Link href="/login" className="w-full block text-center bg-[#1B62FD] hover:bg-[#1554E2] text-white font-bold py-3.5 px-4 rounded-2xl text-xs shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98] cursor-pointer tracking-wider">
+                Access Gateway
               </Link>
-            ))}
+            </div>
           </div>
+
+          {/* 📝 ডানপাশ: ৭ কলাম জুড়ে মিনিমাল হাইলাইটস */}
+          <div className="lg:col-span-7 space-y-8">
+            <div className="max-w-xl">
+              {/* 🎨 থিমের সাথে মিল রেখে টেক্সট কালার (#1B62FD) এর লাইট ভেরিয়েন্ট করা হয়েছে */}
+              <span className="text-xs font-black text-[#3B82F6] uppercase tracking-widest block mb-1">Ecosystem Architecture</span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-none">
+                Engineered for Fluid Operational Speed
+              </h2>
+            </div>
+
+            {/* হাইলাইট লিস্ট */}
+            <div className="space-y-6">
+              {highlights.map((item, idx) => (
+                <div 
+                  key={idx} 
+                  className="flex gap-5 p-5 rounded-2xl hover:bg-[#111A31]/50 border border-transparent hover:border-slate-800/60 transition-all duration-200 group"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-[#111A31] border border-slate-800 flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                    {item.icon}
+                  </div>
+                  <div className="space-y-1">
+                    {/* 🎨 হোভার টেক্সট কালারটিকে ব্র্যান্ড গ্লোয়িং ব্লু (#3B82F6) তে ম্যাচ করা হয়েছে */}
+                    <h3 className="text-sm font-bold text-slate-100 group-hover:text-[#3B82F6] transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-xs text-slate-400 leading-relaxed font-medium">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2">
+              {/* 🎨 ডকুমেন্টেশন অ্যারো আইকন কালারটি থিমের সাথে ম্যাচ করা হয়েছে */}
+              <Link href="/about" className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-white tracking-wider uppercase transition-colors cursor-pointer">
+                Read Documentation <FaArrowRight className="text-[#3B82F6]" />
+              </Link>
+            </div>
+          </div>
+
         </div>
 
       </div>
