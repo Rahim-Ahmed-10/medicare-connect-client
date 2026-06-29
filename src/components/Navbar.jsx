@@ -9,12 +9,15 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   
-  // ইমেজ ব্রোকেন/নষ্ট হলে ট্র্যাকিং করার জন্য একটি স্টেট
+  
   const [imageError, setImageError] = useState(false);
 
   // Better Auth থেকে সেশন এবং ইউজার ডাটা নিয়ে আসা
   const { data: session, isPending } = useSession();
   const user = session?.user;
+  
+  // 🎯 ফিক্সড ১: ইউজারের রোল সেফলি হ্যান্ডেল করা (সবসময় এটিই লিংকে ব্যবহার হবে)
+  const userRole = user?.role || "patient";
 
   // ইউজারের নামের প্রথম অক্ষর বের করার হেল্পার ফাংশন
   const getInitials = (name) => {
@@ -22,8 +25,8 @@ export default function Navbar() {
     return name.trim().charAt(0).toUpperCase();
   };
 
-  const pathname= usePathname();
-  if(pathname.includes('/dashboard')){
+  const pathname = usePathname();
+  if (pathname.includes('/dashboard')) {
     return null;
   }
 
@@ -49,12 +52,10 @@ export default function Navbar() {
           {/* 1. Logo Section */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center gap-2.5 group">
-              {/* 🌟 প্রিমিয়াম গ্রেডিয়েন্ট লোগো আইকন (Feather Icons দিয়ে সুরক্ষিত করা) */}
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center shadow-md shadow-blue-200 group-hover:scale-105 transition-transform duration-200">
                 <FiPlusSquare className="w-5 h-5 text-white" />
               </div>
               
-              {/* ব্র্যান্ডের নাম */}
               <span className="text-2xl font-black bg-gradient-to-r from-slate-900 via-blue-900 to-blue-600 bg-clip-text text-transparent tracking-tight">
                 Medi<span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent font-bold">Care</span>
               </span>
@@ -64,10 +65,21 @@ export default function Navbar() {
           {/* 2. Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-8 font-semibold text-slate-600">
             <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
-            <Link href="/find-doctors" className="hover:text-blue-600 transition-colors">Find Doctors</Link>
+            
+            {/* 🎯 কন্ডিশন: ইউজার লগইন না থাকলে অথবা লগইন করা ইউজার যদি Patient হয়, তবেই দেখাবে */}
+            {(!user || userRole === "patient") && (
+              <Link href="/find-doctors" className="hover:text-blue-600 transition-colors">Find Doctors</Link>
+            )}
+            
             <Link href="/about" className="hover:text-blue-600 transition-colors">About Us</Link>
             <Link href="/contact" className="hover:text-blue-600 transition-colors">Contact Us</Link>
-            {user && <Link href={`dashboard/${user?.role}`} className="hover:text-blue-600 transition-colors">Dashboard</Link>}
+            
+            {/* 🎯 ফিক্সড ২: এখানে user?.role এর বদলে ডাইনামিক এবং সেফ userRole ভ্যারিয়েবল ব্যবহার করা হয়েছে */}
+            {user && (
+              <Link href={`/dashboard/${userRole}`} className="hover:text-blue-600 transition-colors">
+                Dashboard
+              </Link>
+            )}
           </div>
 
           {/* 3. Auth Buttons / User Profile Dropdown */}
@@ -84,13 +96,11 @@ export default function Navbar() {
                 </Link>
               </>
             ) : (
-              /* User Profile Dropdown */
               <div className="relative">
                 <button 
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="flex items-center gap-2.5 focus:outline-none cursor-pointer group bg-slate-50/50 hover:bg-slate-50 px-3 py-1.5 rounded-xl border border-transparent hover:border-slate-100 transition-all"
                 >
-                  {/* কন্ডিশন: ইমেজ যদি থাকে এবং লোডিং এরর না থাকে তবেই ছবি দেখাবে */}
                   {user?.image && !imageError ? (
                     <img
                       src={user.image}
@@ -99,19 +109,16 @@ export default function Navbar() {
                       className="w-8 h-8 rounded-full ring-2 ring-blue-500/20 object-cover transition-all group-hover:ring-blue-500/40"
                     />
                   ) : (
-                    /* ছবি না থাকলে বা ছবি ব্রোকেন হলে ফলব্যাক */
                     <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center font-bold text-xs shadow-sm uppercase transition-all group-hover:bg-blue-100">
                       {getInitials(user?.name)}
                     </div>
                   )}
                   
-                  {/* প্রোফাইলের সাথে ইউজারের নাম */}
                   <span className="text-sm font-semibold text-slate-700 group-hover:text-blue-600 transition-colors max-w-[120px] truncate normal-case">
                     {user?.name}
                   </span>
                 </button>
 
-                {/* Dropdown Menu */}
                 {showDropdown && (
                   <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-xl py-1.5 border border-slate-100/80 animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="px-4 py-2.5 text-sm text-slate-500 border-b border-slate-50">
@@ -124,7 +131,10 @@ export default function Navbar() {
                       )}
                     </div>
                     <Link href="/dashboard/profile" onClick={() => setShowDropdown(false)} className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50/80">My Profile</Link>
-                    <Link href={`dashboard/${user?.role}`}  onClick={() => setShowDropdown(false)} className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50/80">Dashboard</Link>
+                    
+                    {/* 🎯 ফিক্সড ৩: ড্রপডাউনের ভেতরেও userRole ব্যবহার করা হয়েছে */}
+                    <Link href={`/dashboard/${userRole}`} onClick={() => setShowDropdown(false)} className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50/80">Dashboard</Link>
+                    
                     <button 
                       onClick={handleLogout} 
                       className="w-full text-left block px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-bold cursor-pointer border-t border-slate-50 mt-1"
@@ -143,7 +153,6 @@ export default function Navbar() {
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center p-2 rounded-xl text-slate-500 hover:bg-slate-100 focus:outline-none cursor-pointer"
             >
-              {/* 🌟 এখানেও মডিউল এরর এড়াতে FiMenu এবং FiX ব্যবহার করা হয়েছে */}
               {isOpen ? (
                 <FiX className="h-6 w-6 text-slate-600" />
               ) : (
@@ -158,10 +167,21 @@ export default function Navbar() {
       {isOpen && (
         <div className="md:hidden border-t border-slate-100 bg-white px-4 pt-2 pb-4 space-y-1.5 font-semibold text-slate-600 shadow-inner">
           <Link href="/" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Home</Link>
-          <Link href="/find-doctors" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Find Doctors</Link>
+          
+          {/* 🎯 মোবাইল মেনুতেও একই কন্ডিশন সেট করা হলো */}
+          {(!user || userRole === "patient") && (
+            <Link href="/find-doctors" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Find Doctors</Link>
+          )}
+          
           <Link href="/about" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">About Us</Link>
           <Link href="/contact" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Contact Us</Link>
-          {user && <Link href="/dashboard" onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">Dashboard</Link>}
+          
+          {/* 🎯 ফিক্সড ৪: মোবাইল মেনুর ড্যাশবোর্ড লিংকেও userRole ব্যবহার করা হয়েছে */}
+          {user && (
+            <Link href={`/dashboard/${userRole}`} onClick={() => setIsOpen(false)} className="block py-2 px-3 rounded-xl hover:bg-slate-50 hover:text-blue-600">
+              Dashboard
+            </Link>
+          )}
           
           <div className="border-t border-slate-100 pt-3 flex flex-col gap-2">
             {!user ? (

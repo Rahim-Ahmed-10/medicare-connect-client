@@ -8,7 +8,7 @@ export async function POST(request) {
     const headersList = await headers();
     const origin = headersList.get('origin');
 
-    // 📥 ফ্রন্টএন্ড থেকে পাঠানো সম্পূর্ণ ডাটা রিসিভ করা
+    // 📥 ফ্রন্টএন্ড থেকে ডাটা রিসিভ করা
     const body = await request.json();
     const { doctorName, specialty, appointmentDate, selectedSlot, consultationFee, symptomsDescription } = body;
 
@@ -19,15 +19,20 @@ export async function POST(request) {
 
     const user = userSession?.user;
 
-    // 💰 স্ট্রাইপের সেন্ট (cents) কনভার্সন এবং সেফটিチェック
+    // 🔒 সিকিউরিটি চেক: ইউজার লগইন না থাকলে পেমেন্ট সেশন তৈরি করতে দেবে না
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized. Please log in first." }, { status: 401 });
+    }
+
+    // 💰 স্ট্রাইপের সেন্ট (cents) কনভার্সন
     const amountInCents = Math.round(Number(consultationFee || 20) * 100); 
 
-    // 🎯 ইউআরএল কুয়েরি স্ট্রিং তৈরি (সাকসেস পেজে রিড করার জন্য - এখানে ব্র্যাকেট এবং ভেরিয়েবল ফিক্স করা হয়েছে)
+    // 🎯 ইউআরএল কুয়েরি স্ট্রিং (সাকসেস পেজে রিড করার জন্য)
     const queryParams = `doctorName=${encodeURIComponent(doctorName || '')}&specialty=${encodeURIComponent(specialty || '')}&date=${encodeURIComponent(appointmentDate || '')}&time=${encodeURIComponent(selectedSlot || '')}&symptomsDescription=${encodeURIComponent(symptomsDescription || '')}&amount=${consultationFee || '20'}`;
 
     // Create Checkout Sessions 
     const session = await stripe.checkout.sessions.create({
-      customer_email: user?.email || undefined,
+      customer_email: user.email, // অলরেডি ভেরিফাইড ইউজার
       line_items: [
         {
           price_data: {
@@ -36,20 +41,21 @@ export async function POST(request) {
               name: `Medical Consultation - ${doctorName || 'Doctor'}`,
               description: `Specialty: ${specialty || 'General Clinical'}`,
             },
-            unit_amount: amountInCents, // ডাইনামিক ফি এখানে পাস হচ্ছে
+            unit_amount: amountInCents,
           },
           quantity: 1,
         },
       ],
+      // 📊 মেটাডাটা (যা ওয়েবহুক বা স্ট্রাইপ ড্যাশবোর্ডে ট্র্যাক করা যাবে)
       metadata: {
-        userId: user?.id || "guest_user",
-        userEmail: user?.email || "guest_email",
+        userId: user.id,
+        userEmail: user.email,
         doctorName: doctorName || "",
         specialty: specialty || "",
         appointmentDate: appointmentDate || "",
         appointmentTime: selectedSlot || "",
         amount: consultationFee || "20",
-        symptomsDescription: symptomsDescription || "" // 👈 এখানে স্ট্রিং বাদে ডাইনামিক ভেরিয়েবল পাস করা হলো
+        symptomsDescription: symptomsDescription || "" 
       },
       mode: 'payment', 
       success_url: `${origin}/find-doctors/success?session_id={CHECKOUT_SESSION_ID}&${queryParams}`,

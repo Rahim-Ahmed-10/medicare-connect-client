@@ -12,11 +12,13 @@ import {
 } from "react-icons/fa6";
 
 export default function AboutPage() {
+  // 📊 এখানে প্রতিটি স্ট্যাটের সাথে প্রাসঙ্গিক আইকন যুক্ত করে দেওয়া হলো
   const stats = [
     {
       id: 1,
       number: "44,000",
       label: "Team members",
+      icon: <FaUserDoctor className="w-6 h-6 text-[#7A1FA2]" />,
       image:
         "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&auto=format&fit=crop&q=80",
     },
@@ -24,6 +26,7 @@ export default function AboutPage() {
       id: 2,
       number: "900+",
       label: "Locations across NC & SC",
+      icon: <FaHospital className="w-6 h-6 text-[#7A1FA2]" />,
       image:
         "https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?w=600&auto=format&fit=crop&q=80",
     },
@@ -31,6 +34,7 @@ export default function AboutPage() {
       id: 3,
       number: "800+",
       label: "Physician clinics",
+      icon: <FaStethoscope className="w-6 h-6 text-[#7A1FA2]" />,
       image:
         "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?w=600&auto=format&fit=crop&q=80",
     },
@@ -81,11 +85,12 @@ export default function AboutPage() {
 
         {/* 🏥 2. Our Story and Vision Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="relative h-[200px] w-full rounded-[1.5rem] overflow-hidden bg-slate-100 mb-6">
+          {/* 🎯 ফিক্সড: এখানে লুপের বাইরের ‘stat’ বাদ দিয়ে সরাসরি প্রথম অবজেক্টের ইমেজ বা একটি ডিফল্ট মেডিকেল ইমেজ লিংক ব্যবহার করা হয়েছে */}
+          <div className="relative h-[300px] w-full rounded-[1.5rem] overflow-hidden bg-slate-100 shadow-md">
             <img
-              src={stat.image}
-              alt={stat.label}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&auto=format&fit=crop&q=80"
+              alt="MediCare Vision"
+              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
             />
           </div>
 
@@ -116,14 +121,15 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* 📊 3. Interactive Stats Section (নতুন যোগ করা হয়েছে) */}
+        {/* 📊 3. Interactive Stats Section */}
         <div className="bg-white/10 rounded-[2.5rem] p-8 backdrop-blur-sm border border-white/10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
             {stats.map((stat) => (
               <div
                 key={stat.id}
-                className="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center justify-center space-y-2"
+                className="bg-white rounded-2xl p-6 shadow-sm flex flex-col items-center justify-center space-y-2 hover:shadow-md transition-shadow"
               >
+                {/* 🎯 এখন stat.icon সঠিকভাবে শো করবে */}
                 <div className="p-3 bg-purple-50 rounded-full mb-1">
                   {stat.icon}
                 </div>

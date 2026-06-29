@@ -2,13 +2,16 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth"; // 🔐 আপনার প্রজেক্টের Better Auth বা সেশন ইম্পোর্ট করুন
 import { FaUserMd, FaCalendarAlt, FaClock, FaStethoscope, FaWallet } from "react-icons/fa";
 import CancelBookingButton from "@/components/dashboard/CancelBookingButton";
+
  // 👈 ডিলিট হ্যান্ডেল করার জন্য নিচের ক্লায়েন্ট কম্পোনেন্টটি লাগবে
 
 export default async function PatientBookingsPage() {
-  // ১. সেশন থেকে লগইন থাকা ইউজারের ডাটা এবং ইমেইল নেওয়া
+  
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
+ 
   
   const userEmail = session?.user?.email;
 

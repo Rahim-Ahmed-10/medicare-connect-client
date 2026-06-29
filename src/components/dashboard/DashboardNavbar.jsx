@@ -8,17 +8,20 @@ import {
   FaSignOutAlt, 
   FaBell, 
   FaUser, 
-  FaCog,
   FaHome 
 } from "react-icons/fa";
 import { authClient } from "@/lib/auth-client";
 
-export default function DashboardNavbar() {
+// 🎯 ফিক্স ১: প্যারেন্ট লেআউট থেকে 'role' প্রপস হিসেবে রিসিভ করা হচ্ছে
+export default function DashboardNavbar({ role }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter();
 
   const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
+
+  // সেফটি চেক: প্রপস না থাকলে সেশন থেকে অথবা ডিফল্ট 'patient' নিবে
+  const currentRole = role || user?.role || "patient";
 
   const handleLogout = async () => {
     await authClient.signOut({
@@ -30,14 +33,20 @@ export default function DashboardNavbar() {
     });
   };
 
+  // রোল অনুযায়ী টাইটেল টেক্সট সেট করার হেল্পার
+  const getPanelTitle = (roleName) => {
+    if (roleName === "admin") return "Admin Control Panel";
+    if (roleName === "doctor") return "Doctor Control Panel";
+    return "Patient Control Panel";
+  };
+
   return (
-    // 🎨 image_6fa16b.png এর সাথে মিল রেখে ব্যাকগ্রাউন্ড ও বর্ডার ডার্ক করা হয়েছে
     <header className="bg-[#0f172a] border-b border-slate-800/80 h-16 sticky top-0 z-40 flex items-center justify-between px-6 sm:px-10 font-sans">
       
-      {/* 🏷️ বাম পাশ: ড্যাশবোর্ড টাইটেল */}
+      {/* 🏷️ বাম পাশ: রোল অনুযায়ী ডাইনামিক টাইটেল */}
       <div>
-        <h1 className="text-sm sm:text-base font-bold text-white tracking-tight">
-          Patient Control Panel
+        <h1 className="text-sm sm:text-base font-bold text-white tracking-tight capitalize">
+          {getPanelTitle(currentRole)}
         </h1>
         <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium hidden sm:block mt-0.5">
           Overview & Real-time Server Registry
@@ -59,7 +68,6 @@ export default function DashboardNavbar() {
         {/* নোটিফিকেশন বাটন */}
         <button className="w-9 h-9 text-slate-400 hover:text-white hover:bg-slate-800/60 rounded-xl flex items-center justify-center transition-colors relative cursor-pointer">
           <FaBell size={16} />
-          {/* ইমেজ অনুযায়ী লাইট গ্রিন নোটিফিকেশন ডট */}
           <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-[#4ade80] rounded-full ring-2 ring-[#0f172a]"></span>
         </button>
 
@@ -85,11 +93,17 @@ export default function DashboardNavbar() {
                 <FaUserCircle className="text-2xl text-slate-400" />
               )}
               
-              {/* ইউজারনেম ও রোল টেক্সট */}
+              {/* ইউজারনেম ও ডাইনামিক রোল ব্যাজ */}
               <div className="text-left hidden sm:block">
                 <p className="text-xs font-bold text-slate-200 leading-none">{user.name?.split(" ")[0]}</p>
-                <span className="text-[9px] font-black text-blue-400 bg-blue-950/40 px-1.5 py-0.5 rounded-md mt-1 inline-block uppercase tracking-wider border border-blue-900/30">
-                  Patient
+                
+                {/* 🎯 ফিক্স ২: ডাইনামিক রোল অনুযায়ী টেক্সট ও কালার ট্র্যাকিং */}
+                <span className={`text-[9px] font-black bg-blue-950/40 px-1.5 py-0.5 rounded-md mt-1 inline-block uppercase tracking-wider border ${
+                  currentRole === "admin" ? "text-amber-400 border-amber-900/30" :
+                  currentRole === "doctor" ? "text-emerald-400 border-emerald-900/30" :
+                  "text-blue-400 border-blue-900/30"
+                }`}>
+                  {currentRole}
                 </span>
               </div>
             </button>
@@ -103,7 +117,7 @@ export default function DashboardNavbar() {
                 </div>
 
                 <button 
-                  onClick={() => { setIsDropdownOpen(false); router.push("/dashboard/patient/profile"); }}
+                  onClick={() => { setIsDropdownOpen(false); router.push(`/dashboard/${currentRole}/profile`); }}
                   className="w-full flex items-center gap-2 px-4 py-2 text-xs text-slate-300 hover:bg-slate-800 hover:text-white transition-colors text-left cursor-pointer"
                 >
                   <FaUser className="text-slate-500 text-[11px]" /> My Profile

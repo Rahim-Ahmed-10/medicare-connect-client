@@ -21,14 +21,14 @@ import {
   FaCalendarCheck,
 } from "react-icons/fa";
 
-// ক্লায়েন্ট কম্পোনেন্টে সেশন ডাটা প্রপস আকারে পাস করা সবচেয়ে নিরাপদ ও স্ট্যান্ডার্ড প্র্যাকটিস
-export default function DashboardSidebar({ session }) {
+// 🎯 ফিক্সড: layout.js থেকে পাঠানো role এবং user আলাদাভাবে রিসিভ করা হলো
+export default function DashboardSidebar({ role, user }) {
   const pathname = usePathname();
 
-  const user = session?.user;
-  const userRole = session?.user?.role || "patient";
+  // সেশনের বদলে সরাসরি প্রপস থেকে রোল নেওয়া হচ্ছে
+  const userRole = role || "patient";
 
-  // রোল বেসড ড্যাশবোর্ড আইটেম
+  
   const dashboardItems = {
     admin: [
       { icon: House, label: "Home", link: "/dashboard/admin" },
@@ -39,7 +39,7 @@ export default function DashboardSidebar({ session }) {
       { icon: Gear, label: "Settings", link: "/dashboard/admin/settings" },
     ],
     doctor: [
-      { icon: House, label: "Home", link: "/dashboard/doctor" },
+      { icon: House, label: "Home", link: "/dashboard/doctor" }, // 🎯 লেবেল Home করে দেওয়া হলো যাতে সুন্দর দেখায়
       { icon: FaCalendarCheck, label: "Appts", link: "/dashboard/doctor/appointments" },
       { icon: FaUserInjured, label: "Patients", link: "/dashboard/doctor/patients" },
       { icon: FaFileMedical, label: "Presc", link: "/dashboard/doctor/prescriptions" },
@@ -110,7 +110,6 @@ export default function DashboardSidebar({ session }) {
         <div className="h-[calc(100vh-160px)] overflow-y-auto no-scrollbar">
           <nav className="flex flex-col gap-2 w-full">
             {currentNavItems.map((item) => {
-              // 🎯 বর্তমান রুট এবং লিংকের পাথ মিলছে কিনা তা যাচাই (Active Check)
               const isActive = pathname === item.link;
 
               return (
@@ -132,7 +131,7 @@ export default function DashboardSidebar({ session }) {
                     <span className="tracking-wide ml-1">{item.label}</span>
                   </div>
 
-                  {/* ⚡ অ্যাক্টিভ ইন্ডিকেটর বার (বাম পাশে একটি মার্জিত গ্লো লাইন) */}
+                  {/* ⚡ অ্যাক্টিভ ইন্ডিকেটর বার */}
                   {isActive && (
                     <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-blue-500 to-indigo-500 rounded-r-md" />
                   )}

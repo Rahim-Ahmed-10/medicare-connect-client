@@ -3,11 +3,19 @@
 import { useState } from "react";
 import { FaStar, FaRegCommentDots, FaUserMd, FaCalendarAlt, FaPen } from "react-icons/fa";
 import { toast } from "react-toastify";
+// 🎯 Better Auth এর ক্লায়েন্ট ইম্পোর্ট করুন
+import { authClient } from "@/lib/auth-client"; 
 
 export default function PatientReviewsClient({ selectedDoctors, userEmail }) {
   const [submittingId, setSubmittingId] = useState(null);
   const [ratings, setRatings] = useState({});
   const [comments, setComments] = useState({});
+
+  // 🎯 ক্লায়েন্ট মেথড থেকে সরাসরি টোকেন নিয়ে আসা (স্যারের ট্রিক)
+  const sessionToken = authClient.useSession()?.data?.session?.token || authClient.token?.();
+  
+  // 🔥 ব্রাউজারের কনসোলে স্যারের মতো অবজেক্ট আকারে দেখার জন্য লগ
+  console.log({ token: sessionToken });
 
   // ⭐️ রেটিং হ্যান্ডলার
   const handleRatingChange = (docId, value) => {
@@ -45,16 +53,15 @@ export default function PatientReviewsClient({ selectedDoctors, userEmail }) {
     };
 
     try {
-      // ⚠️ মনে করে আপনার Express সার্ভারের সঠিক পোর্ট ও এন্ডপয়েন্ট (রুট) চেক করে নিবেন
       const response = await fetch("http://localhost:8085/api/reviews/submit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer${sessionToken}`
         },
         body: JSON.stringify(reviewPayload),
       });
 
-      // হেডার চেক করা জেসন রেসপন্স কিনা (HTML এরর হ্যান্ডেল করার জন্য)
       const contentType = response.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
         throw new TypeError("Oops, the server didn't respond with JSON! Check your route config.");

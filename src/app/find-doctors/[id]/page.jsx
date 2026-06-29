@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+// 🎯 Better Auth এর ক্লায়েন্ট ইম্পোর্ট করুন
+import { authClient } from "@/lib/auth-client"; 
 
 // স্ট্যান্ডার্ড ও ইউনিভার্সাল আইকন
 import { 
@@ -27,6 +29,9 @@ export default function DoctorDetailsPage() {
   const [selectedSlot, setSelectedSlot] = useState("");
   const [symptoms, setSymptoms] = useState("");
 
+  // 🎯 সরাসরি ক্লায়েন্ট সাইড থেকে Better Auth টোকেনটি বের করা
+  const token = authClient.useSession()?.data?.session?.token || authClient.token?.();
+
   useEffect(() => {
     fetch("/doctors.json")
       .then((res) => res.json())
@@ -46,7 +51,7 @@ export default function DoctorDetailsPage() {
       });
   }, [params.id]);
 
-  // 🚀 ১. ব্রাউজার কনসোলে ডাটা প্রিন্ট এবং স্ট্রাইপ চেকআউটে পাঠানো
+  // 🚀 ব্রাউজার কনসোলে ডাটা প্রিন্ট এবং স্ট্রাইপ চেকআউটে পাঠানো
   const handleSubmit = async (e) => {
     e.preventDefault(); // পেজ রিলোড বন্ধ করবে
 
@@ -65,8 +70,9 @@ export default function DoctorDetailsPage() {
       symptomsDescription: symptoms || "No symptoms logged."
     };
 
-    // 🔥 ব্রাউজারের F12 কনসোলে ডাটা চকচক করবে এখন!
     console.log("🎯 Form Submitted! Booking Payload:", bookingPayload);
+    // 🎯 কনসোলে টোকেনটি যাচ্ছে কিনা চেক করার জন্য লগ
+    console.log("🔐 Sending Request with Token:", token);
 
     // ২. এপিআই এর মাধ্যমে স্ট্রাইপ সেশন তৈরি করা
     try {
@@ -74,6 +80,8 @@ export default function DoctorDetailsPage() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          // 🎯 হেডার্সে টোকেনটি Bearer হিসেবে যুক্ত করা হলো
+          "Authorization": `Bearer ${token?.token}` 
         },
         body: JSON.stringify(bookingPayload),
       });
@@ -82,7 +90,7 @@ export default function DoctorDetailsPage() {
 
       if (response.ok && data.url) {
         console.log("🔄 Redirecting to Stripe:", data.url);
-        window.location.href = data.url; // স্ট্রাইপ পেমেন্ট পেজে নিয়ে যাবে
+        window.location.href = data.url; // স্ট্রাইপ পেমেন্ট পেজে নিয়ে যাবে
       } else {
         console.error("❌ Backend error response:", data);
         alert(data.error || "Failed to initiate payment session.");
@@ -136,14 +144,10 @@ export default function DoctorDetailsPage() {
         {/* 2-Column Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* LEFT SIDE: Doctor Credentials & Feedback */}
+          {/* LEFT SIDE: Doctor Credentials */}
           <div className="lg:col-span-7 space-y-6">
-            
-            {/* Unique Profile Matrix Card */}
             <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-200/60">
               <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start text-center sm:text-left">
-                
-                {/* Styled Avatar Frame */}
                 <div className="w-32 h-32 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 p-1 flex-shrink-0">
                   <img 
                     src={doctor.profileImage || "https://via.placeholder.com/400"} 
@@ -152,7 +156,6 @@ export default function DoctorDetailsPage() {
                   />
                 </div>
 
-                {/* Main Information Stack */}
                 <div className="flex-1 space-y-3">
                   <div>
                     <span className="inline-block bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-md border border-indigo-100">
@@ -163,7 +166,6 @@ export default function DoctorDetailsPage() {
                     </h1>
                   </div>
 
-                  {/* Icon Metadata Row */}
                   <div className="space-y-2 text-sm text-slate-700 pt-1">
                     <p className="flex items-center justify-center sm:justify-start gap-2.5">
                       <FaStethoscope className="text-slate-500 text-xs flex-shrink-0" />
@@ -186,7 +188,6 @@ export default function DoctorDetailsPage() {
               </div>
             </div>
 
-            {/* Unique Clinical Ledger Box */}
             <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-200/60 space-y-4">
               <h3 className="text-base font-bold text-slate-900">Patient Response Summary</h3>
               <div className="flex items-baseline gap-2">
@@ -197,7 +198,6 @@ export default function DoctorDetailsPage() {
                 Appointments securely cleared via checkout channels are eligible to initialize review protocols.
               </p>
             </div>
-
           </div>
 
           {/* RIGHT SIDE: Interactive Configuration Panel */}
@@ -209,7 +209,6 @@ export default function DoctorDetailsPage() {
               </p>
             </div>
 
-            {/* Clinic Active Slots Row */}
             <div className="space-y-2">
               <span className="block text-[10px] font-bold text-slate-500 tracking-widest uppercase">Operational Workdays</span>
               <div className="flex flex-wrap gap-1">
@@ -223,10 +222,7 @@ export default function DoctorDetailsPage() {
 
             <hr className="border-slate-200" />
 
-            {/* 🔄 onSubmit হ্যান্ডলার যুক্ত ফর্ম */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              
-              {/* Date Config */}
               <div className="space-y-1.5">
                 <label className="flex items-center gap-1 text-[11px] font-bold text-slate-700 tracking-wider uppercase">
                   <FaCalendarAlt className="text-indigo-600" /> Select Date Target
@@ -241,7 +237,6 @@ export default function DoctorDetailsPage() {
                 />
               </div>
 
-              {/* Custom Radio/Grid Dynamic Time Selector */}
               <div className="space-y-1.5">
                 <label className="flex items-center gap-1 text-[11px] font-bold text-slate-700 tracking-wider uppercase">
                   <FaClock className="text-indigo-600" /> Allocated Shifts
@@ -264,7 +259,6 @@ export default function DoctorDetailsPage() {
                 </div>
               </div>
 
-              {/* Unique Textarea Segment */}
               <div className="space-y-1.5">
                 <label className="flex items-center gap-1 text-[11px] font-bold text-slate-700 tracking-wider uppercase">
                   <FaFileMedical className="text-indigo-600" /> Symptoms Ledger
@@ -279,7 +273,6 @@ export default function DoctorDetailsPage() {
                 ></textarea>
               </div>
 
-              {/* Complete Secure Action Button */}
               <button
                 type="submit" 
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all active:scale-[0.99] shadow-md shadow-indigo-600/20 text-xs uppercase tracking-wider mt-4"
