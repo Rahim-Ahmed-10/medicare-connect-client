@@ -17,9 +17,9 @@ export default async function DashboardLayout({ children }) {
   // ২. 🎯 ফিক্স ১ (সার্ভার সাইড রাউট প্রোটেকশন): 
   // যদি কোনো ইউজার শুধু '/dashboard' এ আসে, তাকে তার রোল অনুযায়ী সঠিক পেজে পাঠিয়ে দেবে
   // এতে ইউজার মঙ্গোডিবিতে ডক্টর হলে সে আর পেশেন্ট পেজে আটকে থাকবে না
-  if (!session) {
-    redirect("/login");
-  }
+  // if (!session) {
+  //   redirect("/login");
+  // }
 
   return (
     <div className="flex h-screen bg-[#090D16] overflow-hidden font-sans">
