@@ -11,7 +11,8 @@ export default async function DashboardLayout({ children }) {
   });
   
   const user = session?.user || null;
-  const userRole = user?.role || "patient"; 
+  const userRole = user?.role || "patient";
+  console.log(session) 
 
   // ২. 🎯 ফিক্স ১ (সার্ভার সাইড রাউট প্রোটেকশন): 
   // যদি কোনো ইউজার শুধু '/dashboard' এ আসে, তাকে তার রোল অনুযায়ী সঠিক পেজে পাঠিয়ে দেবে
