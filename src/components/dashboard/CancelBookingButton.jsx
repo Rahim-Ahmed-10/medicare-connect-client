@@ -13,7 +13,7 @@ export default function CancelBookingButton({ bookingId }) {
 
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8085/api/bookings/${bookingId}`, {
+      const res = await fetch(`https://medicare-connect-server-nine.vercel.app/api/bookings/${bookingId}`, {
         method: "DELETE",
       });
 

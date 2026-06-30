@@ -53,7 +53,7 @@ export default function PatientReviewsClient({ selectedDoctors, userEmail }) {
     };
 
     try {
-      const response = await fetch("http://localhost:8085/api/reviews/submit", {
+      const response = await fetch("https://medicare-connect-server-nine.vercel.app/api/reviews/submit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

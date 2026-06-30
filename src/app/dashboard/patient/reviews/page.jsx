@@ -12,7 +12,7 @@ export default async function PatientReviewsPage() {
 
   if (user?.email) {
     try {
-      const res = await fetch(`http://localhost:8085/api/bookings?email=${user.email}`, {
+      const res = await fetch(`https://medicare-connect-server-nine.vercel.app/api/bookings?email=${user.email}`, {
         cache: "no-store",
       });
       if (res.ok) {

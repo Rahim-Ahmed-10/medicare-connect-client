@@ -21,7 +21,7 @@ export default async function Success({ searchParams }) {
 
   if (status === 'complete' && metadata) {
     try {
-      const serverUrl = 'http://localhost:8085';
+      const serverUrl = 'https://medicare-connect-server-nine.vercel.app';
       
       // 🚀 এখানে স্ট্রাইপের মেটাডেটার হুবহু কী (Key) ব্যবহার করতে হবে
       await fetch(`${serverUrl}/api/bookings`, {
