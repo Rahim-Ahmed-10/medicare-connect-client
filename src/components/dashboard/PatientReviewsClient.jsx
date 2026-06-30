@@ -1,190 +1,252 @@
 "use client";
 
-import { useState } from "react";
-import { FaStar, FaRegCommentDots, FaUserMd, FaCalendarAlt, FaPen } from "react-icons/fa";
-import { toast } from "react-toastify";
-// 🎯 Better Auth এর ক্লায়েন্ট ইম্পোর্ট করুন
-import { authClient } from "@/lib/auth-client"; 
+import { authClient } from "@/lib/auth-client";
+import { useEffect, useState } from "react";
+import { 
+  FaUserMd, 
+  FaCalendarAlt, 
+  FaMoneyBillWave, 
+  FaRegCheckCircle, 
+  FaStethoscope, 
+  FaFileAlt, 
+  FaStar,
+  FaClock,
+  FaShieldAlt
+} from "react-icons/fa";
 
-export default function PatientReviewsClient({ selectedDoctors, userEmail }) {
-  const [submittingId, setSubmittingId] = useState(null);
-  const [ratings, setRatings] = useState({});
-  const [comments, setComments] = useState({});
 
-  // 🎯 ক্লায়েন্ট মেথড থেকে সরাসরি টোকেন নিয়ে আসা (স্যারের ট্রিক)
-  const sessionToken = authClient.useSession()?.data?.session?.token || authClient.token?.();
-  
-  // 🔥 ব্রাউজারের কনসোলে স্যারের মতো অবজেক্ট আকারে দেখার জন্য লগ
-  console.log({ token: sessionToken });
+export default function PatientDashboard() {
+  const [appointments, setAppointments] = useState([]);
+  const [reviewCount, setReviewCount] = useState(0); 
+  const [loading, setLoading] = useState(true);
+  
+  const { data: session, isPending } = authClient.useSession();
+  const userEmail = session?.user?.email;
 
-  // ⭐️ রেটিং হ্যান্ডলার
-  const handleRatingChange = (docId, value) => {
-    setRatings((prev) => ({ ...prev, [docId]: value }));
-  };
+  // 🎯 Better Auth ক্লায়েন্ট থেকে সরাসরি টোকেনটি বের করা
+  const token = authClient.useSession()?.data?.session?.token || authClient.token?.();
 
-  // 📝 কমেন্ট হ্যান্ডলার
-  const handleCommentChange = (docId, value) => {
-    setComments((prev) => ({ ...prev, [docId]: value }));
-  };
+  const serverBaseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
-  // 🚀 রিভিউ এক্সপ্রেস ব্যাকএন্ডে সেভ করার হ্যান্ডলার
-  const handleSubmitReview = async (e, doc) => {
-    e.preventDefault();
-    const docId = doc._id;
-    
-    const rating = ratings[docId] || 5;
-    const comment = comments[docId] || "";
+  // 🚀 ১. বুকিংস লোড করার সময় টোকেন পাঠানো
+  const loadBookings = async () => {
+    if (!userEmail) return;
+    try {
+      const res = await fetch(`${serverBaseUrl}/api/bookings?email=${userEmail}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          // 🎯 হেডার্সে সিকিউর টোকেন যুক্ত করা হলো
+          "Authorization": `Bearer ${token?.token}`
+        }
+      });
+      const result = await res.json();
+      if (result.success) {
+        setAppointments(result.data);
+      }
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    }
+  };
 
-    if (!comment.trim()) {
-      toast.warning("✍️ Please write a quick comment before submitting your feedback.");
-      return;
-    }
+  // 🚀 ২. রিভিউ কাউন্ট লোড করার সময় টোকen পাঠানো
+  const loadReviewCount = async () => {
+    if (!userEmail) return;
+    try {
+      const res = await fetch(`${serverBaseUrl}/api/reviews/count?email=${userEmail}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          // 🎯 হেডার্সে সিকিউর টোকেন যুক্ত করা হলো
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const result = await res.json();
+      if (result.success) {
+        setReviewCount(result.count || 0);
+      }
+    } catch (error) {
+      console.error("Error fetching review count:", error);
+    }
+  };
 
-    setSubmittingId(docId);
+  useEffect(() => {
+    const initDashboard = async () => {
+      // 🎯 ইউজার ইমেইল এবং টোকেন দুটিই রেডি হলেই কেবল এপিআই কল হবে
+      if (userEmail && token) {
+        setLoading(true);
+        await Promise.all([loadBookings(), loadReviewCount()]); 
+        setLoading(false);
+      } else if (!isPending && !userEmail) {
+        setLoading(false);
+      }
+    };
+    initDashboard();
+  }, [userEmail, isPending, token]); // 🎯 ডিপেনডেন্সি অ্যারেতে token যুক্ত করা হয়েছে
 
-    const reviewPayload = {
-      email: userEmail,
-      bookingId: docId,
-      doctorName: doc.doctorName,
-      specialty: doc.specialty,
-      rating,
-      comment,
-      date: new Date().toISOString().split('T')[0] // আজকের ডেট ফরম্যাট YYYY-MM-DD
-    };
+  const totalFees = appointments.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
 
-    try {
-      const response = await fetch("https://medicare-connect-server-nine.vercel.app/api/reviews/submit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer${sessionToken}`
-        },
-        body: JSON.stringify(reviewPayload),
-      });
+  if (isPending || loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#070a13]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(59,130,246,0.4)]"></div>
+          <div className="text-xs font-semibold text-slate-400 tracking-wider uppercase">Loading Workspace...</div>
+        </div>
+      </div>
+    );
+  }
 
-      const contentType = response.headers.get("content-type");
-      if (!contentType || !contentType.includes("application/json")) {
-        throw new TypeError("Oops, the server didn't respond with JSON! Check your route config.");
-      }
+  if (!userEmail) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#070a13] p-4">
+        <div className="bg-[#0f172a] p-8 rounded-2xl border border-slate-800 text-center max-w-sm shadow-xl">
+          <p className="text-sm font-medium text-slate-300">Please log in to your patient account.</p>
+        </div>
+      </div>
+    );
+  }
 
-      const result = await response.json();
+  return (
+    <div className="min-h-screen bg-[#070a13] p-4 sm:p-6 lg:p-8 font-sans text-slate-200 antialiased">
+      <div className="max-w-7xl mx-auto">
+        
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          
+          {/* 📌 বাম পাশের সেকশন */}
+          <div className="lg:col-span-4 space-y-4">
+            <div className="bg-[#0f172a] p-6 rounded-2xl border border-slate-800/80 shadow-lg relative overflow-hidden">
+              <div className="absolute -right-6 -bottom-6 text-blue-500/5 pointer-events-none">
+                <FaRegCheckCircle size={130} />
+              </div>
+              <div className="relative z-10 space-y-2.5">
+                <span className="text-[10px] bg-blue-500/10 border border-blue-500/20 text-blue-400 font-extrabold uppercase px-2.5 py-1 rounded-md tracking-widest">
+                  Overview Portal
+                </span>
+                <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  Welcome, <span className="text-blue-400">{session?.user?.name || "Patient"}</span>
+                </h1>
+                <p className="text-slate-400 text-xs font-medium truncate">
+                  {userEmail}
+                </p>
+              </div>
+            </div>
 
-      if (response.ok && result.success) {
-        toast.success(`🎉 Feedback successfully submitted for ${doc.doctorName}!`);
-        setComments((prev) => ({ ...prev, [docId]: "" })); // ক্লিয়ার কমেন্ট বক্স
-      } else {
-        toast.error(result.message || "Failed to submit review inside database.");
-      }
-    } catch (error) {
-      toast.error(error.message || "Something went wrong! Check connection.");
-    } finally {
-      setSubmittingId(null);
-    }
-  };
+            <div className="bg-[#0f172a] rounded-2xl border border-slate-800/80 p-5 space-y-3.5 shadow-lg">
+              <h3 className="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2">Metrics Ledger</h3>
+              
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#111a31] border border-slate-800/60">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center text-sm">
+                    <FaCalendarAlt />
+                  </div>
+                  <span className="text-xs font-semibold text-slate-300">Upcoming Clinics</span>
+                </div>
+                <span className="text-sm font-bold text-white bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700">{appointments.length}</span>
+              </div>
 
-  return (
-    <div className="space-y-4">
-      
-      {/* 📊 কাউন্টার স্ট্যাটাস */}
-      <div className="bg-[#0D1321] border border-white/[0.06] p-4 rounded-xl flex items-center justify-between shadow-lg">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-500/10 text-blue-400 rounded-lg flex items-center justify-center text-sm border border-blue-500/20">
-            <FaRegCommentDots />
-          </div>
-          <div>
-            <div className="text-xs font-bold text-white uppercase tracking-wider">Available Consultations</div>
-            <div className="text-[10px] text-slate-400">Select an appointment below to append your ledger review.</div>
-          </div>
-        </div>
-        <div className="text-xl font-black text-blue-400 px-3 py-1 bg-blue-500/15 rounded-md border border-blue-500/20">
-          {selectedDoctors?.length || 0}
-        </div>
-      </div>
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#111a31] border border-slate-800/60">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm">
+                    <FaFileAlt />
+                  </div>
+                  <span className="text-xs font-semibold text-slate-300">Medical Logs</span>
+                </div>
+                <span className="text-sm font-bold text-white bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700">1</span>
+              </div>
 
-      {/* 📋 সিলেক্টেড ডক্টরস লিস্ট গ্রিড */}
-      {selectedDoctors?.length === 0 ? (
-        <div className="text-center py-16 bg-[#0D1321] border border-white/[0.06] rounded-2xl">
-          <div className="w-12 h-12 bg-white/[0.04] text-slate-500 rounded-full flex items-center justify-center mx-auto mb-3">
-            <FaUserMd className="text-xl" />
-          </div>
-          <p className="text-xs text-slate-400 font-bold">No selected doctors found.</p>
-          <p className="text-[11px] text-slate-500 mt-0.5">Please book a practitioner via your appointment dashboard first.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4">
-          {selectedDoctors.map((doc) => {
-            const currentRating = ratings[doc._id] || 5;
-            return (
-              <div 
-                key={doc._id} 
-                className="bg-[#0D1321] border border-white/[0.06] p-5 rounded-2xl shadow-xl transition-all hover:border-blue-500/20"
-              >
-                {/* ডাক্তার ইনফো ও ডেট */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.04] pb-3 mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
-                      <FaUserMd className="text-lg" />
-                    </div>
-                    <div>
-                      <h3 className="text-xs font-black text-white tracking-wide">{doc.doctorName}</h3>
-                      <p className="text-[10px] text-blue-400 font-bold uppercase mt-0.5">{doc.specialty || "General Health"}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-slate-500 font-mono text-[10px] bg-white/[0.02] px-2.5 py-1 rounded-md border border-white/[0.04] self-start sm:self-center">
-                    <FaCalendarAlt className="text-[9px]" />
-                    <span>Session Date: {doc.date || "Recent"}</span>
-                  </div>
-                </div>
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#111a31] border border-slate-800/60">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm">
+                    <FaMoneyBillWave />
+                  </div>
+                  <span className="text-xs font-semibold text-slate-300">Total Payments</span>
+                </div>
+                <span className="text-sm font-bold text-emerald-400 bg-emerald-950/30 px-2 py-0.5 rounded-md border border-emerald-800/40">${totalFees}</span>
+              </div>
 
-                {/* রিভিউ ও রেটিং ফর্ম */}
-                <form onSubmit={(e) => handleSubmitReview(e, doc)} className="space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/[0.01] p-3 rounded-xl border border-white/[0.03]">
-                    
-                    {/* ডাইনামিক ইন্টারঅ্যাক্টিভ স্টার সিলেকশন */}
-                    <div className="flex flex-col gap-1">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Assign Score Metrics</span>
-                      <div className="flex items-center gap-1 text-base cursor-pointer">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <FaStar
-                            key={star}
-                            onClick={() => handleRatingChange(doc._id, star)}
-                            className={`transition-colors active:scale-90 ${
-                              star <= currentRating ? "text-amber-400" : "text-white/[0.08]"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
+              <div className="flex items-center justify-between p-3 rounded-xl bg-[#111a31] border border-slate-800/60">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center text-sm">
+                    <FaStar />
+                  </div>
+                  <span className="text-xs font-semibold text-slate-300">Submitted Reviews</span>
+                </div>
+                <span className="text-sm font-bold text-white bg-slate-800 px-2 py-0.5 rounded-md border border-slate-700">{reviewCount}</span>
+              </div>
+            </div>
 
-                    {/* সাবমিট বাটন */}
-                    <button
-                      type="submit"
-                      disabled={submittingId === doc._id}
-                      className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white font-bold text-[11px] px-4 py-2 rounded-xl transition-all active:scale-95 flex items-center gap-1.5 self-end sm:self-center cursor-pointer"
-                    >
-                      <FaPen className="text-[9px]" />
-                      {submittingId === doc._id ? "Posting..." : "Post Review"}
-                    </button>
-                  </div>
+            <div className="bg-blue-950/20 border border-blue-900/40 p-4 rounded-xl flex gap-3 items-start">
+              <FaShieldAlt className="text-blue-400 shrink-0 mt-0.5 text-xs" />
+              <p className="text-[11px] text-slate-400 leading-relaxed font-medium">
+                Your clinical records are safeguarded with end-to-end cloud encryption layers.
+              </p>
+            </div>
+          </div>
 
-                  {/* কমেন্ট ইনপুট বক্স */}
-                  <div>
-                    <textarea
-                      rows="2"
-                      value={comments[doc._id] || ""}
-                      onChange={(e) => handleCommentChange(doc._id, e.target.value)}
-                      placeholder={`Write an honest testimonial profile regarding your experience with ${doc.doctorName}...`}
-                      className="w-full bg-white/[0.02] border border-white/[0.06] rounded-xl px-4 py-2.5 text-xs font-semibold text-white focus:outline-none focus:border-blue-500/40 transition-all resize-none"
-                    ></textarea>
-                  </div>
-                </form>
+          {/* 🗓️ ডান পাশের সেকশন */}
+          <div className="lg:col-span-8 bg-[#0f172a] rounded-2xl border border-slate-800/80 shadow-lg overflow-hidden">
+            <div className="p-5 border-b border-slate-800 bg-[#111a31]/40 flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
+              <h2 className="text-sm font-bold text-white uppercase tracking-wider">Live Consultation Schedule</h2>
+            </div>
 
-              </div>
-            );
-          })}
-        </div>
-      )}
+            {appointments.length === 0 ? (
+              <div className="p-16 text-center text-slate-500 text-sm font-medium tracking-wide">
+                No appointment logs or sessions linked with this profile.
+              </div>
+            ) : (
+              <div className="p-6 space-y-6">
+                {appointments.map((appointment, index) => (
+                  <div key={appointment._id} className="relative flex gap-4 items-start group">
+                    
+                    <div className="flex flex-col items-center h-full pt-1.5 shrink-0">
+                      <div className="w-3 h-3 rounded-full bg-blue-500 border-2 border-[#0f172a] ring-4 ring-blue-950/40 transition-all group-hover:ring-blue-900/60"></div>
+                      {index !== appointments.length - 1 && (
+                        <div className="w-[1px] bg-slate-800 group-hover:bg-slate-700 h-24 mt-2 transition-colors"></div>
+                      )}
+                    </div>
 
-    </div>
-  );
+                    <div className="flex-1 bg-[#111a31]/40 hover:bg-[#111a31]/80 p-5 rounded-xl border border-slate-800/80 transition-all flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                      
+                      <div className="flex gap-3 items-center">
+                        <div className="w-10 h-10 rounded-xl bg-[#0f172a] text-blue-400 border border-slate-800 flex items-center justify-center text-base shrink-0 shadow-inner">
+                          <FaUserMd />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-white text-sm tracking-wide">{appointment.doctorName}</h4>
+                          <p className="text-[10px] text-blue-400 flex items-center gap-1 mt-0.5 font-extrabold uppercase tracking-widest">
+                            <FaStethoscope className="text-[9px]" /> {appointment.specialty}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                        <div className="flex items-center gap-2.5 text-xs text-slate-300 font-medium">
+                          <span className="flex items-center gap-1.5 bg-[#0f172a] px-2.5 py-1.5 rounded-lg border border-slate-800">
+                            <FaCalendarAlt className="text-slate-500 text-[10px]" /> {appointment.date}
+                          </span>
+                          <span className="flex items-center gap-1.5 bg-[#0f172a] px-2.5 py-1.5 rounded-lg border border-slate-800">
+                            <FaClock className="text-slate-500 text-[10px]" /> {appointment.time}
+                          </span>
+                        </div>
+                        
+                        <span className="bg-[#052e16]/30 text-[#4ade80] text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-md border border-[#15803d]/30 shadow-[0_0_10px_rgba(74,222,128,0.05)]">
+                          {appointment.status || "CONFIRMED"}
+                        </span>
+                      </div>
+
+                    </div>
+
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  );
 }

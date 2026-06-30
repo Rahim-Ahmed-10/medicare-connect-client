@@ -16,7 +16,7 @@ export default async function PatientPaymentsPage() {
   // ২. সরাসরি আপনার রানিং এক্সপ্রেস সার্ভার (Port: 8085) থেকে ডাটা ফেচ করা
   if (userEmail) {
     try {
-      const res = await fetch(`https://medicare-connect-server-nine.vercel.app/api/bookings?email=${userEmail}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/bookings?email=${userEmail}`, {
         cache: "no-store", // রিয়েল-টাইম ডাটার জন্য ক্যাশ অফ
       });
       

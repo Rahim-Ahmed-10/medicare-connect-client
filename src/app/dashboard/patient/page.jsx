@@ -26,13 +26,13 @@ export default function PatientDashboard() {
   // 🎯 Better Auth ক্লায়েন্ট থেকে সরাসরি টোকেনটি বের করা
   const token = authClient.useSession()?.data?.session?.token || authClient.token?.();
 
-  const serverBaseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+   
 
   // 🚀 ১. বুকিংস লোড করার সময় টোকেন পাঠানো
   const loadBookings = async () => {
     if (!userEmail) return;
     try {
-      const res = await fetch(`${serverBaseUrl}/api/bookings?email=${userEmail}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/bookings?email=${userEmail}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -53,7 +53,7 @@ export default function PatientDashboard() {
   const loadReviewCount = async () => {
     if (!userEmail) return;
     try {
-      const res = await fetch(`${serverBaseUrl}/api/reviews/count?email=${userEmail}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/reviews/count?email=${userEmail}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
