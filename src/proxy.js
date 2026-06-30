@@ -12,9 +12,9 @@ export async function proxy(request) {
       request.cookies.get("__secure_better-auth.session_token")?.value;
 
     // যদি কোনো সেশন টোকেন না থাকে, তবে ইউজারকে লগইন পেজে রিডাইরেক্ট করুন
-    if (!sessionToken) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
+    // if (!sessionToken) {
+    //   return NextResponse.redirect(new URL("/login", request.url));
+    // }
 
     // 🎯 Better Auth API থেকে সার্ভার-সাইড সেশন এবং ইউজার ডাটা ফেচ করা
     try {
