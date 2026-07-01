@@ -21,7 +21,7 @@ export default async function PatientBookingsPage() {
   // ২. ব্যাকএন্ড এক্সপ্রেস সার্ভার থেকে ডাটা ফেচ করা
   if (userEmail) {
     try {
-      const res = await fetch(`https://medicare-connect-server-nine.vercel.app/api/bookings?email=${userEmail}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/bookings?email=${userEmail}`, {
         cache: "no-store", // রিয়েল-টাইম ডাটা পাওয়ার জন্য ক্যাশ অফ রাখা হলো
       });
       const result = await res.json();

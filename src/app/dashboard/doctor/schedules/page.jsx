@@ -1,9 +1,10 @@
+import DoctorsSchedules from '@/components/dashboard/DoctorsSchedules';
 import React from 'react';
 
 const SchedulesPage = () => {
     return (
         <div>
-            <h2>schedules</h2>
+            <DoctorsSchedules />
         </div>
     );
 };

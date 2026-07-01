@@ -25,6 +25,7 @@ export default function PatientDashboard() {
 
   // 🎯 Better Auth ক্লায়েন্ট থেকে সরাসরি টোকেনটি বের করা
   const token = authClient.useSession()?.data?.session?.token || authClient.token?.();
+  console.log(token, "token")
 
    
 
