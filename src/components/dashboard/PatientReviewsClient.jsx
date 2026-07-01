@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient, useSession } from "@/lib/auth-client";
+import { useSession } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import { 
   FaUserMd, 
@@ -20,11 +20,11 @@ export default function PatientDashboard() {
   const [reviewCount, setReviewCount] = useState(0); 
   const [loading, setLoading] = useState(true);
   
-  const { data: session, isPending } =useSession();
+  const { data: session, isPending } = useSession();
   const userEmail = session?.user?.email;
 
   // 🎯 Better Auth ক্লায়েন্ট থেকে সরাসরি টোকেনটি বের করা
-  const token = authClient.useSession()?.data?.session?.token || authClient.token?.();
+  const token = useSession()?.data?.session?.token || useSession()?.data?.session?.token;
 
   const serverBaseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 

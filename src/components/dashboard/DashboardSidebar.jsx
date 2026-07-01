@@ -85,7 +85,7 @@ export default function DashboardSidebar({ role, user }) {
   { 
     icon: FaFileMedical, // 🎯 ইমেজের প্রেসক্রিপশন কেবিন (মেডিকেল শিট) আইকনের জন্য
     label: "Prescriptions Cabin", 
-    link: "/dashboard/doctor/prescriptions/:id*" 
+    link: "/dashboard/doctor/prescriptions" 
   },
   { 
     icon: FaUserCog, // 🎯 ইমেজের প্রোফাইল ক্রেডেনশিয়ালস আইকনের জন্য
