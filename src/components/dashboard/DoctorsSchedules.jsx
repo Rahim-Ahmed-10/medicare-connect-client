@@ -37,131 +37,97 @@ const DoctorsSchedules = () => {
         <div className="min-h-screen bg-[#090e1a] text-white p-6 md:p-10 font-sans antialiased">
             <div className="max-w-6xl mx-auto">
                 
-                {/* 📌 মেইন হেডিং */}
                 <h1 className="text-2xl font-bold text-white tracking-tight mb-8">
                     Manage Clinical Schedule Slots
                 </h1>
 
-                {/* 🗂️ মডার্ন গ্রিড লেআউট */}
-                <div className="grid grid-cols-1  gap-8">
+                <div className="grid grid-cols-1 gap-8">
 
-                    {/* 🗓️ কার্ড ১: Working Weekdays */}
-                    <div className="bg-white rounded-[20px] p-6 sm:p-8 flex flex-col justify-between min-h-[280px] shadow-xl border border-gray-100 transition-all duration-300 hover:shadow-2xl">
-                        <div>
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 style={{ color: '#0f172a' }} className="text-sm font-semibold tracking-wide">
-                                    Working Weekdays
-                                </h2>
-                                <span style={{ color: '#047857', backgroundColor: '#ecfdf5' }} className="text-[11px] font-medium px-2.5 py-1 rounded-full tracking-wide">
-                                    Configure Days
-                                </span>
-                            </div>
+                    {/* কার্ড ১: Working Weekdays */}
+                    <div className="bg-[#0f172a] rounded-[20px] p-8 border border-gray-800 shadow-2xl transition-all duration-300">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-sm font-bold text-gray-300 tracking-wider uppercase">Working Weekdays</h2>
+                            <span className="text-[11px] font-bold px-3 py-1 bg-[#1e293b] text-emerald-400 rounded-full border border-emerald-900/50">
+                                Configure Days
+                            </span>
+                        </div>
 
-                            {/* ইনপুট গ্রুপ */}
-                            <div className="flex gap-3 mb-6">
-                                <div className="relative flex-1">
-                                    <select 
-                                        value={selectedDay}
-                                        onChange={(e) => setSelectedDay(e.target.value)}
-                                        style={{ color: '#334155' }}
-                                        className="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl pl-4 pr-10 py-3 font-medium appearance-none outline-none focus:border-[#1e533c] focus:ring-1 focus:ring-[#1e533c] cursor-pointer transition-all"
-                                    >
-                                        {availableDays.map((day, index) => (
-                                            <option key={index} value={day} style={{ color: '#334155' }}>{day}</option>
-                                        ))}
-                                    </select>
-                                    <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400 text-xs">
-                                        <FaChevronDown />
-                                    </div>
-                                </div>
-                                <button 
-                                    onClick={handleAddDay}
-                                    style={{ backgroundColor: '#1e533c', color: '#ffffff' }}
-                                    className="text-xs font-semibold px-5 py-3 rounded-xl flex items-center gap-1.5 hover:bg-[#153b2b] active:scale-95 transition-all shadow-sm shrink-0"
+                        <div className="flex gap-3 mb-6">
+                            <div className="relative flex-1">
+                                <select 
+                                    value={selectedDay}
+                                    onChange={(e) => setSelectedDay(e.target.value)}
+                                    className="w-full bg-[#0a1120] border border-gray-700 text-white text-sm rounded-xl pl-4 pr-10 py-3 outline-none focus:border-emerald-500 transition-all cursor-pointer"
                                 >
-                                    <FaPlus className="text-[10px]" /> Add
-                                </button>
+                                    {availableDays.map((day, index) => (
+                                        <option key={index} value={day} className="bg-[#0f172a]">{day}</option>
+                                    ))}
+                                </select>
+                                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-500">
+                                    <FaChevronDown size={12} />
+                                </div>
                             </div>
+                            <button 
+                                onClick={handleAddDay}
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-emerald-900/20"
+                            >
+                                <FaPlus /> Add
+                            </button>
+                        </div>
 
-                            {/* মডার্ন পিলস/চিপস ডিজাইন */}
-                            <div className="flex flex-wrap gap-2">
-                                {days.map((day, index) => (
-                                    <div 
-                                        key={index} 
-                                        style={{ color: '#475569', backgroundColor: '#f8fafc' }}
-                                        className="flex items-center gap-2 border border-slate-200/80 font-medium text-xs px-3.5 py-2 rounded-xl transition-all hover:border-slate-300"
-                                    >
-                                        <span>{day}</span>
-                                        <button 
-                                            onClick={() => handleRemoveDay(day)}
-                                            className="text-slate-400 hover:text-red-500 transition-colors ml-1 p-0.5 rounded-md hover:bg-slate-100"
-                                        >
-                                            <IoClose className="text-sm" />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
+                        <div className="flex flex-wrap gap-3">
+                            {days.map((day, index) => (
+                                <div key={index} className="flex items-center gap-2 bg-[#1e293b] border border-gray-700 text-gray-200 text-xs font-bold px-4 py-2.5 rounded-lg">
+                                    {day}
+                                    <button onClick={() => handleRemoveDay(day)} className="text-gray-500 hover:text-red-400">
+                                        <IoClose size={16} />
+                                    </button>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
-                    {/* 🕒 কার্ড ২: Configured Appointment Hours */}
-                    <div className="bg-white rounded-[20px] p-6 sm:p-8 flex flex-col justify-between min-h-[280px] shadow-xl border border-gray-100 transition-all duration-300 hover:shadow-2xl">
-                        <div>
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 style={{ color: '#0f172a' }} className="text-sm font-semibold tracking-wide">
-                                    Configured Appointment Hours
-                                </h2>
-                            </div>
+                    {/* কার্ড ২: Appointment Hours */}
+                    <div className="bg-[#0f172a] rounded-[20px] p-8 border border-gray-800 shadow-2xl transition-all duration-300">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-sm font-bold text-gray-300 tracking-wider uppercase">Configured Appointment Hours</h2>
+                        </div>
 
-                            {/* ইনপুট গ্রুপ */}
-                            <div className="flex gap-3 mb-6">
-                                <div className="relative flex-1">
-                                    <select 
-                                        value={selectedTime}
-                                        onChange={(e) => setSelectedTime(e.target.value)}
-                                        style={{ color: '#334155' }}
-                                        className="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl pl-4 pr-10 py-3 font-medium appearance-none outline-none focus:border-[#1e533c] focus:ring-1 focus:ring-[#1e533c] cursor-pointer transition-all"
-                                    >
-                                        {availableTimes.map((time, index) => (
-                                            <option key={index} value={time} style={{ color: '#334155' }}>{time}</option>
-                                        ))}
-                                    </select>
-                                    <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400 text-xs">
-                                        <FaChevronDown />
-                                    </div>
-                                </div>
-                                <button 
-                                    onClick={handleAddTimeSlot}
-                                    style={{ backgroundColor: '#1e533c', color: '#ffffff' }}
-                                    className="text-xs font-semibold px-5 py-3 rounded-xl flex items-center gap-1.5 hover:bg-[#153b2b] active:scale-95 transition-all shadow-sm shrink-0"
+                        <div className="flex gap-3 mb-6">
+                            <div className="relative flex-1">
+                                <select 
+                                    value={selectedTime}
+                                    onChange={(e) => setSelectedTime(e.target.value)}
+                                    className="w-full bg-[#0a1120] border border-gray-700 text-white text-sm rounded-xl pl-4 pr-10 py-3 outline-none focus:border-emerald-500 transition-all cursor-pointer"
                                 >
-                                    <FaPlus className="text-[10px]" /> Add
-                                </button>
+                                    {availableTimes.map((time, index) => (
+                                        <option key={index} value={time} className="bg-[#0f172a]">{time}</option>
+                                    ))}
+                                </select>
+                                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-gray-500">
+                                    <FaChevronDown size={12} />
+                                </div>
                             </div>
+                            <button 
+                                onClick={handleAddTimeSlot}
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-6 py-3 rounded-xl flex items-center gap-2 transition-all shadow-lg shadow-emerald-900/20"
+                            >
+                                <FaPlus /> Add
+                            </button>
+                        </div>
 
-                            {/* টাইম স্লটের আকর্ষণীয় চিপস */}
-                            <div className="flex flex-wrap gap-2">
-                                {timeSlots.map((time, index) => (
-                                    <div 
-                                        key={index} 
-                                        style={{ color: '#065f46', backgroundColor: '#e6f7f0' }}
-                                        className="flex items-center gap-2 font-semibold text-xs px-3.5 py-2 rounded-xl border border-[#bfead9] transition-all hover:bg-[#d8f3e5]"
-                                    >
-                                        <span>{time}</span>
-                                        <button 
-                                            onClick={() => handleRemoveTimeSlot(time)}
-                                            className="text-emerald-700/60 hover:text-red-500 transition-colors ml-1 p-0.5 rounded-md hover:bg-emerald-100/60"
-                                        >
-                                            <IoClose className="text-sm" />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
+                        <div className="flex flex-wrap gap-3">
+                            {timeSlots.map((time, index) => (
+                                <div key={index} className="flex items-center gap-2 bg-emerald-950/30 border border-emerald-800/50 text-emerald-400 text-xs font-bold px-4 py-2.5 rounded-lg">
+                                    {time}
+                                    <button onClick={() => handleRemoveTimeSlot(time)} className="text-emerald-500 hover:text-red-400">
+                                        <IoClose size={16} />
+                                    </button>
+                                </div>
+                            ))}
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </div>
     );

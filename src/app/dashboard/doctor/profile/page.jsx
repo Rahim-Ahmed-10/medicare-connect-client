@@ -1,56 +1,77 @@
-"use client";
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { 
+  FaSave, FaUserMd, FaStethoscope, FaClock, 
+  FaAward, FaDollarSign, FaHospital, FaLink 
+} from 'react-icons/fa';
 
-const DoctorsProfilePage = ({ doctorEmail }) => {
-    const [profile, setProfile] = useState(null);
-    const [isEditing, setIsEditing] = useState(false);
-
-    useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/doctor/profile?email=${doctorEmail}`)
-            .then(res => res.json())
-            .then(data => setProfile(data.data));
-    }, [doctorEmail]);
-
-    const handleUpdate = async () => {
-        await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/doctor/profile`, {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(profile)
-        });
-        setIsEditing(false);
-        alert("Profile Updated Successfully!");
-    };
-
-    if (!profile) return <p>Loading profile...</p>;
-
-    return (
-        <div className="p-8 max-w-lg mx-auto bg-white shadow-xl rounded-2xl border">
-            <h2 className="text-2xl font-bold mb-6">Doctor Profile</h2>
-            
-            <div className="space-y-4">
-                <div>
-                    <label className="block text-sm font-semibold">Name</label>
-                    <input className="w-full border p-2 rounded" value={profile.name} onChange={(e) => setProfile({...profile, name: e.target.value})} disabled={!isEditing} />
-                </div>
-                <div>
-                    <label className="block text-sm font-semibold">Specialty</label>
-                    <input className="w-full border p-2 rounded" value={profile.specialty} onChange={(e) => setProfile({...profile, specialty: e.target.value})} disabled={!isEditing} />
-                </div>
-                <div>
-                    <label className="block text-sm font-semibold">Consultation Fees</label>
-                    <input className="w-full border p-2 rounded" value={profile.fees} onChange={(e) => setProfile({...profile, fees: e.target.value})} disabled={!isEditing} />
-                </div>
-            </div>
-
-            <div className="mt-6">
-                {isEditing ? (
-                    <button onClick={handleUpdate} className="bg-green-600 text-white px-4 py-2 rounded">Save Changes</button>
-                ) : (
-                    <button onClick={() => setIsEditing(true)} className="bg-blue-600 text-white px-4 py-2 rounded">Edit Profile</button>
-                )}
-            </div>
+const CredentialsEditor = () => {
+  return (
+    <div className="max-w-4xl mx-auto p-8 bg-[#0a1120] rounded-xl shadow-2xl border border-gray-800 text-gray-200">
+      <h2 className="text-2xl font-bold text-white mb-8 border-b border-gray-700 pb-4 flex items-center gap-3">
+        <FaAward className="text-blue-500" /> Professional Credentials Editor
+      </h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Specialty */}
+        <div>
+          <label className="block text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-2">
+            <FaStethoscope /> Clinical Specialties
+          </label>
+          <select className="w-full p-3 bg-[#111c30] border border-gray-700 rounded-lg outline-none text-white focus:border-blue-500">
+            <option>Cardiology</option>
+            <option>Gynecologist</option>
+          </select>
         </div>
-    );
+
+        {/* Experience */}
+        <div>
+          <label className="block text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-2">
+            <FaClock /> Experience (Years)
+          </label>
+          <input type="number" defaultValue="14" className="w-full p-3 bg-[#111c30] border border-gray-700 rounded-lg outline-none text-white" />
+        </div>
+
+        {/* Qualification */}
+        <div>
+          <label className="block text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-2">
+            <FaAward /> Qualifications Statement
+          </label>
+          <input type="text" defaultValue="MD, FACC - Harvard Medical School" className="w-full p-3 bg-[#111c30] border border-gray-700 rounded-lg outline-none text-white" />
+        </div>
+
+        {/* Fee */}
+        <div>
+          <label className="block text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-2">
+            <FaDollarSign /> Co-pay Consultation Fee ($)
+          </label>
+          <input type="number" defaultValue="150" className="w-full p-3 bg-[#111c30] border border-gray-700 rounded-lg outline-none text-white" />
+        </div>
+      </div>
+
+      {/* Hospital */}
+      <div className="mt-8">
+        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-2">
+          <FaHospital /> Attached Medical Hospital Name
+        </label>
+        <input type="text" defaultValue="Boston General Hospital" className="w-full p-3 bg-[#111c30] border border-gray-700 rounded-lg outline-none text-white" />
+      </div>
+
+      {/* Profile Photo */}
+      <div className="mt-8">
+        <label className="block text-xs font-bold text-gray-400 uppercase mb-2 flex items-center gap-2">
+          <FaLink /> Profile Photo / Avatar Image (URL)
+        </label>
+        <input type="text" className="w-full p-3 bg-[#111c30] border border-gray-700 rounded-lg outline-none text-white" placeholder="https://..." />
+      </div>
+
+      {/* Save Button */}
+      <div className="mt-10 flex justify-end">
+        <button className="flex items-center gap-3 bg-[#10b981] hover:bg-[#059669] text-white px-8 py-3 rounded-lg font-bold transition-all">
+          <FaSave /> Save Professional Records
+        </button>
+      </div>
+    </div>
+  );
 };
 
-export default DoctorsProfilePage;
+export default CredentialsEditor;
