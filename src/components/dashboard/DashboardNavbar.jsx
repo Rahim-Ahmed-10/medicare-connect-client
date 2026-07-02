@@ -27,7 +27,7 @@ export default function DashboardNavbar({ role }) {
     await authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.push("/login");
+          router.push("/");
         },
       },
     });

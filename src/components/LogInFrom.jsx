@@ -175,6 +175,41 @@ export default function Login() {
           </span>
         </button>
 
+       <div className="mt-8 p-6 bg-[#1e293b] border border-gray-700 rounded-2xl max-w-sm mx-auto text-center shadow-xl">
+  <div className="space-y-3">
+    <div className="space-y-1 text-sm text-gray-300">
+    <p>
+      <span className="text-gray-500">Admin Email:</span> 
+      <span className="ml-2 font-mono bg-[#0f172a] px-2 py-0.5 rounded">admin@gmail.com</span>
+    </p>
+    <p>
+      <span className="text-gray-500">Admin Password:</span> 
+      <span className="ml-2 font-mono bg-[#0f172a] px-2 py-0.5 rounded">Admin!123</span>
+    </p>
+  </div>
+  <div className="space-y-1 text-sm text-gray-300">
+    <p>
+      <span className="text-gray-500"> Patient Email:</span> 
+      <span className="ml-2 font-mono bg-[#0f172a] px-2 py-0.5 rounded">kulsum@gmail.com</span>
+    </p>
+    <p>
+      <span className="text-gray-500">Patient Password:</span> 
+      <span className="ml-2 font-mono bg-[#0f172a] px-2 py-0.5 rounded">Kulsum!123</span>
+    </p>
+  </div>
+  <div className="space-y-1 text-sm text-gray-300">
+    <p>
+      <span className="text-gray-500">Doctors Email:</span> 
+      <span className="ml-2 font-mono bg-[#0f172a] px-2 py-0.5 rounded">tanbir@gmail.com</span>
+    </p>
+    <p>
+      <span className="text-gray-500">Doctors Password:</span> 
+      <span className="ml-2 font-mono bg-[#0f172a] px-2 py-0.5 rounded">tanbir!123</span>
+    </p>
+  </div>
+  </div>
+</div>
+
         {/* Footer Link */}
         <p className="text-center text-sm text-slate-600 mt-6">
           Don't have an account?{" "}

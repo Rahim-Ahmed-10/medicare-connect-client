@@ -3,57 +3,51 @@ import { NextResponse } from "next/server";
 export async function proxy(request) {
   const { pathname } = request.nextUrl;
 
-  // শুধু ড্যাশবোর্ড রাউটগুলোর জন্য চেক রান হবে
-  if (pathname.startsWith("/dashboard")) {
+  // ১. যে পাথগুলোতে প্রটেকশন প্রয়োজন
+  const isDashboardRoute = pathname.startsWith("/dashboard");
+  const isProtectedFindDoctors = pathname.startsWith("/find-doctors");
+
+  if (isDashboardRoute || isProtectedFindDoctors) {
     
-    // 🎯 টোকেন কুকি থেকে সরাসরি সেশন টোকেন রিড করার নিরাপদ উপায়
+    // কুকি থেকে টোকেন চেক করা
     const sessionToken = 
       request.cookies.get("better-auth.session_token")?.value || 
       request.cookies.get("__secure_better-auth.session_token")?.value;
 
-    // যদি কোনো সেশন টোকেন না থাকে, তবে ইউজারকে লগইন পেজে রিডাইরেক্ট করুন
-    // if (!sessionToken) {
-    //   return NextResponse.redirect(new URL("/login", request.url));
-    // }
+    // যদি টোকেন না থাকে, সরাসরি লগইন পেজে পাঠিয়ে দিন
+    if (!sessionToken) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
 
-    // 🎯 Better Auth API থেকে সার্ভার-সাইড সেশন এবং ইউজার ডাটা ফেচ করা
+    // ২. টোকেন থাকলে সেশন ভ্যালিডেশন (রোল চেক করার জন্য)
     try {
       const res = await fetch(`${request.nextUrl.origin}/api/auth/get-session`, {
-        headers: {
-          // রিকোয়েস্টের কুকি হেডারটি সরাসরি ফরওয়ার্ড করে দেওয়া হলো
-          cookie: request.headers.get("cookie") || "",
-        },
+        headers: { cookie: request.headers.get("cookie") || "" },
       });
 
-      if (res.ok) {
-        const session = await res.json();
-        const user = session?.user;
-        const userRole = user?.role || "patient";
+      if (!res.ok) {
+        // সেশন ইনভ্যালিড হলে লগইন পেজে পাঠান
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
 
-        // ১. ডাক্তার যদি ভুল করে পেশেন্ট ড্যাশবোর্ডে ঢোকার চেষ্টা করে, তবে তাকে ডাক্তারের ড্যাশবোর্ডে পাঠান
-        if (pathname.startsWith("/dashboard/patient") && userRole === "doctor") {
-          return NextResponse.redirect(new URL("/dashboard/doctor", request.url));
-        }
+      const session = await res.json();
+      const userRole = session?.user?.role;
 
-        // ২. পেশেন্ট যদি ডাক্তার ড্যাশবোর্ডে ঢোকার চেষ্টা করে, তাকে পেশেন্ট ড্যাশবোর্ডে পাঠান
-        if (pathname.startsWith("/dashboard/doctor") && userRole === "patient") {
-          return NextResponse.redirect(new URL("/dashboard/patient", request.url));
-        }
-
-        // ৩. শুধু /dashboard পাথে হিট করলে রোল অনুযায়ী সঠিক ড্যাশবোর্ডে পাঠান
-        if (pathname === "/dashboard" || pathname === "/dashboard/") {
-          return NextResponse.redirect(new URL(`/dashboard/${userRole}`, request.url));
-        }
+      // ড্যাশবোর্ডের জন্য রোল বেসড রিডাইরেক্ট লজিক (আপনার আগের কোড)
+      if (isDashboardRoute) {
+        if (pathname.startsWith("/dashboard/patient") && userRole === "doctor") return NextResponse.redirect(new URL("/dashboard/doctor", request.url));
+        if (pathname.startsWith("/dashboard/doctor") && userRole === "patient") return NextResponse.redirect(new URL("/dashboard/patient", request.url));
+        if (pathname === "/dashboard" || pathname === "/dashboard/") return NextResponse.redirect(new URL(`/dashboard/${userRole}`, request.url));
       }
     } catch (error) {
-      console.error("Auth middleware error:", error);
+      return NextResponse.redirect(new URL("/login", request.url));
     }
   }
 
   return NextResponse.next();
 }
 
-// যে পাথগুলোতে এই মিডলওয়্যারটি ট্রিগার হবে
+// ম্যাচার আপডেট করুন
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/find-doctors/:path*"],
 };
