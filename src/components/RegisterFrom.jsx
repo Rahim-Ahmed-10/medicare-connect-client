@@ -65,7 +65,7 @@ export default function Register() {
           // 🎯 ম্যাজিক লাইন: router.push-এর বদলে হার্ড রিফ্রেশ করে হোম পেজে পাঠানো হচ্ছে
           // এর ফলে ব্রাউজারের সেশন স্টেট সম্পূর্ণ রিফ্রেশ হবে এবং নেভবার সাথে সাথে আপডেট হবে।
           setTimeout(() => {
-            window.location.href = "/";
+            window.location.href = "/login";
           }, 1500);
         },
         onError: (ctx) => {
