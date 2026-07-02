@@ -2,12 +2,15 @@
 import React, { useState, useEffect } from 'react';
 
 const CashFlowsPage = () => {
-    const [payments, setPayments] = useState([]);
+    const [cashFlows, setCashFlows] = useState([]);
 
     useEffect(() => {
-        fetch("http://localhost:8085/api/payments")
+        // নতুন এন্ডপয়েন্ট থেকে ডাটা আনা হচ্ছে
+        fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/all-cash-flows`)
             .then(res => res.json())
-            .then(data => setPayments(data))
+            .then(res => {
+                if(res.success) setCashFlows(res.data);
+            })
             .catch(err => console.error("Error:", err));
     }, []);
 
@@ -27,13 +30,13 @@ const CashFlowsPage = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {payments.map((payment) => (
-                            <tr key={payment._id} className="border-t border-gray-700 hover:bg-[#2d3748] transition">
-                                <td className="p-4 font-medium">{payment.patientName}</td>
-                                <td className="p-4">{payment.doctorName}</td>
-                                <td className="p-4 font-mono text-xs text-gray-400">{payment.chargeId}</td>
-                                <td className="p-4 text-emerald-400 font-bold">${payment.amount}</td>
-                                <td className="p-4 text-gray-400">{new Date(payment.date).toLocaleDateString()}</td>
+                        {cashFlows.map((flow) => (
+                            <tr key={flow._id} className="border-t border-gray-700 hover:bg-[#2d3748] transition">
+                                <td className="p-4 font-medium">{flow.patientName}</td>
+                                <td className="p-4">{flow.doctorName}</td>
+                                <td className="p-4 font-mono text-xs text-gray-400">{flow.chargeId}</td>
+                                <td className="p-4 text-emerald-400 font-bold">${flow.amount}</td>
+                                <td className="p-4 text-gray-400">{flow.date}</td>
                             </tr>
                         ))}
                     </tbody>

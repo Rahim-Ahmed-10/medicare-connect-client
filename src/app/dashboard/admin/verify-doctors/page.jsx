@@ -8,7 +8,7 @@ const VerifyDoctorsPage = () => {
   // ডাটাবেজ থেকে ডাটা লোড করা
   const loadDoctors = async () => {
     try {
-      const res = await fetch("http://localhost:8085/api/doctors");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/doctors`);
       const data = await res.json();
       setDoctors(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -24,7 +24,7 @@ const VerifyDoctorsPage = () => {
   const handleAction = async (id, action) => {
     setLoading(true); // লোডিং শুরু
     try {
-      const res = await fetch(`http://localhost:8085/api/doctors/${action}/${id}`, { 
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/doctors/${action}/${id}`, { 
         method: 'PATCH' 
       });
       
