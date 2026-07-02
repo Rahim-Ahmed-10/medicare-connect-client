@@ -14,12 +14,6 @@ export default async function DashboardLayout({ children }) {
   const userRole = user?.role || "patient";
   console.log(session) 
 
-  // ২. 🎯 ফিক্স ১ (সার্ভার সাইড রাউট প্রোটেকশন): 
-  // যদি কোনো ইউজার শুধু '/dashboard' এ আসে, তাকে তার রোল অনুযায়ী সঠিক পেজে পাঠিয়ে দেবে
-  // এতে ইউজার মঙ্গোডিবিতে ডক্টর হলে সে আর পেশেন্ট পেজে আটকে থাকবে না
-  // if (!session) {
-  //   redirect("/login");
-  // }
 
   return (
     <div className="flex h-screen bg-[#090D16] overflow-hidden font-sans">
@@ -29,9 +23,7 @@ export default async function DashboardLayout({ children }) {
 
       {/* 🛠️ ডানপাশের অংশ */}
       <div className="flex flex-col flex-1 h-full overflow-hidden">
-        
-        {/* 🎯 ফিক্স ২: উপরে ডাইনামিক নববারে প্রপস পাস করা */}
-        {/* আপনার নতুন কোড অনুযায়ী এখানে role={userRole} পাঠানো নিশ্চিত করা হলো */}
+
         <DashboardNavbar role={userRole} user={user} />
 
         {/* 📝 মেইন কন্টেন্ট এরিয়া */}

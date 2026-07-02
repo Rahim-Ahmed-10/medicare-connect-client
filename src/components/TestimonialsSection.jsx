@@ -35,7 +35,7 @@ export default function TestimonialsSection() {
       <div className="max-w-7xl mx-auto">
         
         {/* Section Header */}
-        <div className="text-center pt-16 max-w-2xl mx-auto mb-16 space-y-3">
+        <div className="text-center  max-w-2xl mx-auto mb-16 space-y-3">
           {/* ছোট ব্যাজটি ডার্ক পেজের গ্লো থিমে সাজানো */}
           <div className="inline-flex items-center gap-2 text-purple-400 font-bold text-xs tracking-wide uppercase bg-[#111A31] px-4 py-2 rounded-full border border-purple-900/30">
             <FaHeartbeat className="w-4 h-4 text-rose-500 animate-pulse" />

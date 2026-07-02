@@ -28,7 +28,7 @@ export default function FeaturesSection() {
 
   return (
     // 🎯 থিমের ব্যাকগ্রাউন্ড কালার (#0D1527) ফিক্সড রাখা হয়েছে
-    <div className="w-full bg-[#0D1527] pb-24 px-4 sm:pt-36 sm:px-6 lg:px-8 font-sans text-slate-200">
+    <div className="w-full bg-[#0D1527] pb-12 px-4 sm:pt-36 sm:px-6 lg:px-8 font-sans text-slate-200">
       <div className="max-w-7xl mx-auto">
         
         {/* মেইন স্প্লিট গ্রিড */}
