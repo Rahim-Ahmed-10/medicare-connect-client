@@ -1,72 +1,108 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { 
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, 
+  AreaChart, Area, PieChart, Pie, Cell, Legend, CartesianGrid 
+} from 'recharts';
 import { FaUsers, FaUserMd, FaCalendarCheck, FaDollarSign } from 'react-icons/fa';
 
 const AdminDashboardHomePage = () => {
-  const [stats, setStats] = useState({
-    patients: 0,
-    clinicians: 0,
-    bookings: 0,
-    revenue: 0
-  });
-  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({ patients: 0, clinicians: 0, bookings: 0, revenue: 0 });
+  const [chartData, setChartData] = useState({ ratings: [], timeline: [], specialty: [] });
 
   useEffect(() => {
-    const fetchAdminStats = async () => {
-      try {
-        const serverUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:8085";
-        
-        // এখানে আপনার সার্ভারের API এন্ডপয়েন্ট অনুযায়ী ইউআরএলগুলো ঠিক করুন
-        const res = await fetch(`${serverUrl}/api/admin/dashboard-stats`);
-        const data = await res.json();
-        
-        if (data) {
-          setStats({
-            patients: data.totalPatients || 0,
-            clinicians: data.totalClinicians || 0,
-            bookings: data.totalBookings || 0,
-            revenue: data.totalRevenue || 0
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching stats:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    const fetchData = async () => {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin/dashboard-stats`);
+      const data = await res.json();
+      
+      setStats({
+        patients: data.totalPatients,
+        clinicians: data.totalClinicians,
+        bookings: data.totalBookings,
+        revenue: data.totalRevenue
+      });
 
-    fetchAdminStats();
+      // চার্টের ডাটা ম্যাপ করা
+      setChartData({
+        ratings: data.ratingData || [], 
+        timeline: data.timelineData || [],
+        specialty: data.specialtyData || []
+      });
+    };
+    fetchData();
   }, []);
 
-  if (loading) return <div className="p-10 text-center text-emerald-500">Loading Dashboard...</div>;
-
-  const statCards = [
-    { title: "Total Patients", value: stats.patients, icon: <FaUsers />, color: "text-blue-500" },
-    { title: "Verified Clinicians", value: stats.clinicians, icon: <FaUserMd />, color: "text-emerald-500" },
-    { title: "All Bookings", value: stats.bookings, icon: <FaCalendarCheck />, color: "text-purple-500" },
-    { title: "Gross Co-pays", value: `$${stats.revenue}`, icon: <FaDollarSign />, color: "text-amber-500" },
-  ];
+  const COLORS = ['#10b981', '#8b5cf6', '#0ea5e9', '#f59e0b', '#ef4444', '#ec4899'];
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Hospital Ecosystem Controls</h2>
+    <div className="p-8 bg-[#0f172a] min-h-screen text-white">
+      <h2 className="text-3xl font-bold mb-8 text-white">Hospital Ecosystem Controls</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {statCards.map((stat, index) => (
-          <div key={index} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center gap-4">
-            <div className={`text-2xl ${stat.color} bg-gray-100 p-3 rounded-lg`}>
-              {stat.icon}
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 uppercase font-semibold">{stat.title}</p>
-              <h3 className="text-2xl font-black text-gray-800">{stat.value}</h3>
-            </div>
-          </div>
-        ))}
+      {/* ৪টি মেইন কার্ড */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <StatCard title="Total Patients" value={stats.patients} icon={<FaUsers />} color="text-blue-400" />
+        <StatCard title="Verified Clinicians" value={stats.clinicians} icon={<FaUserMd />} color="text-emerald-400" />
+        <StatCard title="All Bookings" value={stats.bookings} icon={<FaCalendarCheck />} color="text-purple-400" />
+        <StatCard title="Gross Co-pays" value={`$${stats.revenue}`} icon={<FaDollarSign />} color="text-amber-400" />
+      </div>
+
+      {/* চার্ট সেকশন */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Clinician Performance */}
+        <div className="bg-[#1e293b] p-6 rounded-xl border border-gray-700">
+          <h3 className="text-lg font-semibold mb-4">Clinician Performance Index</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={chartData.ratings}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <XAxis dataKey="doctorName" stroke="#94a3b8" />
+              <YAxis stroke="#94a3b8" />
+              <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: 'none' }} />
+              <Bar dataKey="rating" fill="#10b981" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Appointment Timeline */}
+        <div className="bg-[#1e293b] p-6 rounded-xl border border-gray-700">
+          <h3 className="text-lg font-semibold mb-4">Appointment Timeline</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <AreaChart data={chartData.timeline}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <XAxis dataKey="_id" stroke="#94a3b8" />
+              <YAxis stroke="#94a3b8" />
+              <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: 'none' }} />
+              <Area type="monotone" dataKey="count" stroke="#10b981" fill="#065f46" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Specialty Breakdown */}
+      <div className="bg-[#1e293b] p-6 rounded-xl border border-gray-700 mt-6">
+        <h3 className="text-lg font-semibold mb-4">Ecosystem Specialty Breakdown</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <PieChart>
+            <Pie data={chartData.specialty} dataKey="count" nameKey="_id" cx="50%" cy="50%" innerRadius={80} outerRadius={100} paddingAngle={5}>
+              {chartData.specialty.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
+            </Pie>
+            <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: 'none' }} />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
       </div>
     </div>
   );
 };
+
+const StatCard = ({ title, value, icon, color }) => (
+  <div className="bg-[#1e293b] p-6 rounded-xl border border-gray-700 shadow-sm flex items-center gap-4">
+    <div className={`text-2xl ${color} bg-[#0f172a] p-3 rounded-lg`}>{icon}</div>
+    <div>
+      <p className="text-xs text-gray-400 uppercase tracking-wider">{title}</p>
+      <h3 className="text-2xl font-black text-white">{value}</h3>
+    </div>
+  </div>
+);
 
 export default AdminDashboardHomePage;

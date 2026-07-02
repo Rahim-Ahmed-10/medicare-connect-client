@@ -56,11 +56,6 @@ export default function DashboardSidebar({ role, user }) {
     link: "/dashboard/admin/verify-doctors" 
   },
   { 
-    icon: FaCalendarAlt, // 🎯 Clinical Appts Registry এর ক্যালেন্ডার/রেজিস্ট্রি আইকন
-    label: "Clinical Appts Registry", 
-    link: "/dashboard/admin/appointments-registry" 
-  },
-  { 
     icon: FaDollarSign, // 🎯 Stripe Cash Flows এর ডলার/ক্যাশফ্লো আইকন
     label: "Stripe Cash Flows", 
     link: "/dashboard/admin/cash-flows" 

@@ -120,7 +120,7 @@ const DoctorPage = () => {
                   const patientReview = reviews.find(r => r.patientId === booking.patientId || r.email === booking.userEmail);
                   return (
                     <tr key={booking._id} className="hover:bg-gray-800/20">
-                      <td className="p-4 pl-6 font-semibold">{booking.userEmail?.split('@')[2] || "Unknown"}</td>
+                      <td className="p-4 pl-6 font-semibold">{booking.userEmail?.split('@')[0] || "Unknown"}</td>
                       <td className="p-4 text-amber-200/90">{booking.symptomsDescription || "No issues specified"}</td>
                       <td className="p-4 pr-6 text-gray-400 italic">
                         {patientReview ? (
