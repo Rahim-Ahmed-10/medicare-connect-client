@@ -204,7 +204,7 @@ export default function Login() {
     </p>
     <p>
       <span className="text-gray-500">Doctors Password:</span> 
-      <span className="ml-2 font-mono bg-[#0f172a] px-2 py-0.5 rounded">tanbir!123</span>
+      <span className="ml-2 font-mono bg-[#0f172a] px-2 py-0.5 rounded">Tanbir!123</span>
     </p>
   </div>
   </div>
