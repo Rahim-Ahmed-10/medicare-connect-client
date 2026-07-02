@@ -49,19 +49,29 @@ const AdminDashboardHomePage = () => {
 
       {/* চার্ট সেকশন */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Clinician Performance */}
-        <div className="bg-[#1e293b] p-6 rounded-xl border border-gray-700">
-          <h3 className="text-lg font-semibold mb-4">Clinician Performance Index</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData.ratings}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-              <XAxis dataKey="doctorName" stroke="#94a3b8" />
-              <YAxis stroke="#94a3b8" />
-              <Tooltip contentStyle={{ backgroundColor: '#0f172a', border: 'none' }} />
-              <Bar dataKey="rating" fill="#10b981" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+       {/* Clinician Performance */}
+<div className="bg-[#1e293b] p-6 rounded-xl border border-gray-700">
+  <h3 className="text-lg font-semibold mb-4">Clinician Performance Index</h3>
+  <ResponsiveContainer width="100%" height={300}>
+    <BarChart data={chartData.ratings.filter(d => d.rating > 0)}> {/* এখানে filter যোগ করা হয়েছে */}
+      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+      <XAxis 
+        dataKey="doctorName" 
+        stroke="#94a3b8" 
+        fontSize={10}             // নাম ছোট করার জন্য ফন্ট সাইজ কমিয়ে দিলাম
+        interval={0}              // সব নাম দেখানোর জন্য
+        angle={-45}               // নামগুলো বাঁকা করে দিলে জায়গা বাঁচে এবং প্রফেশনাল লাগে
+        textAnchor="end"          // নামগুলো সুন্দরভাবে অ্যালাইন করার জন্য
+        height={60}               // নামগুলোর জন্য জায়গা বাড়ানো হলো
+      />
+      <YAxis stroke="#94a3b8" fontSize={12} />
+      <Tooltip 
+        contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '8px' }} 
+      />
+      <Bar dataKey="rating" fill="#10b981" radius={[4, 4, 0, 0]} />
+    </BarChart>
+  </ResponsiveContainer>
+</div>
 
         {/* Appointment Timeline */}
         <div className="bg-[#1e293b] p-6 rounded-xl border border-gray-700">

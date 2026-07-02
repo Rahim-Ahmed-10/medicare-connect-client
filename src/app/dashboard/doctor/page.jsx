@@ -3,14 +3,9 @@
 import { authClient } from "@/lib/auth-client";
 import React, { useState, useEffect } from 'react';
 import { 
-  FaUsers, 
-  FaClock, 
-  FaStar, 
   FaRegEnvelope, 
   FaUserMd, 
   FaCircle,
-  FaStethoscope,
-  FaUser
 } from "react-icons/fa";
 
 const DoctorPage = () => {
@@ -54,23 +49,24 @@ const DoctorPage = () => {
     fetchDoctorData();
   }, [doctorName]);
 
-  const totalApprovedPatients = bookings.filter(b => 
-    b.status?.toLowerCase() === "confirmed" || b.status?.toLowerCase() === "approved"
-  ).length;
+  // 🌟 ইউনিক পেশেন্ট কাউন্ট করার লজিক (Prescribed সহ)
+  const uniquePatients = new Set(
+    bookings
+      .filter(b => ["confirmed", "approved", "prescribed"].includes(b.status?.toLowerCase()))
+      .map(b => b.userEmail)
+  ).size;
 
-  const pendingPatients = bookings.filter(b => b.status?.toLowerCase() === "pending").length;
-  
   const validReviews = Array.isArray(reviews) ? reviews : [];
   const averageRating = validReviews.length > 0 
     ? (validReviews.reduce((acc, curr) => acc + Number(curr.rating || 0), 0) / validReviews.length).toFixed(1) 
-    : "5.0";
+    : "0.0";
 
   if (isPending) return <div className="min-h-screen flex items-center justify-center bg-[#090e1a] text-emerald-500">Loading...</div>;
 
   return (
     <div className="min-h-screen bg-[#090e1a] text-white p-4 sm:p-10 font-sans">
       <div className="max-w-7xl mx-auto">
-        {/* 📌 Header */}
+        {/* Header */}
         <div className="mb-8 bg-[#111827] p-6 rounded-2xl border border-gray-800 flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-xl border border-emerald-500/20">
@@ -83,15 +79,11 @@ const DoctorPage = () => {
           </div>
         </div>
 
-        {/* 📊 Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-[#111827] p-6 rounded-2xl border-l-4 border-emerald-500 border border-gray-800">
             <p className="text-xs font-bold text-gray-400 uppercase">Total Patients</p>
-            <h3 className="text-3xl font-black mt-2">{totalApprovedPatients}</h3>
-          </div>
-          <div className="bg-[#111827] p-6 rounded-2xl border-l-4 border-amber-500 border border-gray-800">
-            <p className="text-xs font-bold text-gray-400 uppercase">Pending Approvals</p>
-            <h3 className="text-3xl font-black mt-2">{pendingPatients}</h3>
+            <h3 className="text-3xl font-black mt-2">{uniquePatients}</h3>
           </div>
           <div className="bg-[#111827] p-6 rounded-2xl border-l-4 border-blue-500 border border-gray-800">
             <p className="text-xs font-bold text-gray-400 uppercase">Rating Score</p>
@@ -100,9 +92,9 @@ const DoctorPage = () => {
           </div>
         </div>
 
-        {/* 📋 Patient Records & Feedback Table */}
+        {/* Patient Records Table */}
         <div className="bg-[#111827] rounded-2xl border border-gray-800 overflow-hidden">
-          <div className="p-5 border-b border-gray-800 bg-[#161f30] flex justify-between">
+          <div className="p-5 border-b border-gray-800 bg-[#161f30]">
             <h2 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2"><FaCircle className="text-emerald-500 text-[8px]" /> Patient Records & Feedback</h2>
           </div>
           
@@ -111,7 +103,6 @@ const DoctorPage = () => {
               <thead>
                 <tr className="text-gray-400 text-[11px] uppercase border-b border-gray-800">
                   <th className="p-4 pl-6">Patient Name</th>
-                  <th className="p-4">Symptom</th>
                   <th className="p-4 pr-6">Patient Feedback</th>
                 </tr>
               </thead>
@@ -121,7 +112,6 @@ const DoctorPage = () => {
                   return (
                     <tr key={booking._id} className="hover:bg-gray-800/20">
                       <td className="p-4 pl-6 font-semibold">{booking.userEmail?.split('@')[0] || "Unknown"}</td>
-                      <td className="p-4 text-amber-200/90">{booking.symptomsDescription || "No issues specified"}</td>
                       <td className="p-4 pr-6 text-gray-400 italic">
                         {patientReview ? (
                           <div className="flex flex-col">

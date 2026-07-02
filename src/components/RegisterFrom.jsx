@@ -81,26 +81,21 @@ export default function Register() {
   };
 
   // ২. গুগল দিয়ে সাইন আপ হ্যান্ডেলার
-  const handleGoogleSignUp = async () => {
-    setError("");
-    setGoogleLoading(true);
-    try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/", // গুগল লগইন শেষে এই ইউআরএল-এ ব্যাক করবে
-        // 🌟 Better-Auth-এর লেটেস্ট নিয়ম অনুযায়ী কাস্টম ফিল্ড এভাবে পাস করতে হয়
-        userAdditionalFields: {
-          role: formData.role,
-          status: formData.role === "doctor" ? "unverified" : "active",
-          plan: "free"
-        }
-      });
-    } catch (err) {
-      setError("Google sign up failed. Please try again.");
-      console.error(err);
-      setGoogleLoading(false);
-    }
-  };
+const handleGoogleSignUp = async () => {
+  try {
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/", // লগইন হওয়ার পর যেখানে পাঠাতে চান
+      userAdditionalFields: {
+        role: "patient", // ডিফল্ট রোল
+        status: "active",
+        plan: "free"
+      }
+    });
+  } catch (err) {
+    console.error("Google Auth Error:", err);
+  }
+};
 
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-slate-50/50 px-4 py-12">
