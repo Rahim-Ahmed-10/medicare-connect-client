@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🏥 MediCare
 
-## Getting Started
+একটি আধুনিক এবং পূর্ণাঙ্গ হেলথকেয়ার ম্যানেজমেন্ট প্ল্যাটফর্ম যা রোগী, ডাক্তার এবং অ্যাডমিনের মধ্যে নিরবচ্ছিন্ন সমন্বয় সাধন করে।
 
-First, run the development server:
+## 📋 প্রজেক্টের সংক্ষিপ্ত বিবরণ
+**MediCare Connect** এমন একটি ডিজিটাল ইকোসিস্টেম যেখানে রোগীরা সহজেই বিশেষজ্ঞ ডাক্তার খুঁজে অ্যাপয়েন্টমেন্ট নিতে পারেন, নিরাপদ পেমেন্ট সম্পন্ন করতে পারেন এবং ডিজিটাল প্রেসক্রিপশন গ্রহণ করতে পারেন। পাশাপাশি ডাক্তার এবং অ্যাডমিনদের জন্য রয়েছে আলাদা প্যানেল।
 
-```bash
+---
+
+## 🛠 প্রযুক্তি ও টুলস (Tech Stack)
+* **Frontend:** Next.js (App Router), Tailwind CSS, Framer Motion, Recharts
+* **Backend:** Node.js, Express.js
+* **Database:** MongoDB
+* **Authentication:** JWT, Firebase (Google Login)
+* **Payment Gateway:** Stripe
+
+---
+
+## ✨ মূল ফিচারসমূহ
+
+### 👤 রোগী (Patient)
+- **ডাক্তার খুঁজে পাওয়া:** নাম এবং স্পেশালিটি অনুযায়ী ডাক্তার সার্চ ও ফিল্টারিং।
+- **অ্যাপয়েন্টমেন্ট:** সরাসরি অ্যাপয়েন্টমেন্ট বুকিং সুবিধা।
+- **পেমেন্ট:** Stripe গেটওয়ের মাধ্যমে নিরাপদ পেমেন্ট।
+- **হিস্টোরি:** অ্যাপয়েন্টমেন্ট হিস্টোরি এবং রিভিউ প্রদানের সুযোগ।
+
+### 👨‍⚕️ ডাক্তার (Doctor)
+- **প্রোফাইল:** পূর্ণাঙ্গ প্রোফাইল ম্যানেজমেন্ট ও শিডিউল সেটআপ।
+- **ম্যানেজমেন্ট:** অ্যাপয়েন্টমেন্ট রিকোয়েস্ট একসেপ্ট/রিজেক্ট করা।
+- **প্রেসক্রিপশন:** রোগীদের জন্য ডিজিটাল প্রেসক্রিপশন তৈরি ও ম্যানেজমেন্ট।
+
+### 🛡️ অ্যাডমিন (Admin)
+- **ইউজার কন্ট্রোল:** ইউজার এবং ডাক্তারদের প্রোফাইল ভেরিফিকেশন ও ম্যানেজমেন্ট।
+- **মনিটরিং:** পেমেন্ট এবং অ্যাপয়েন্টমেন্ট রেকর্ড পর্যবেক্ষণ।
+- **অ্যানালিটিক্স:** ড্যাশবোর্ডে রিয়েল-টাইম অ্যানালিটিক্স ও চার্ট (Recharts)।
+
+---
+
+## 🚀 ইন্সটলেশন ও রান করার নিয়ম
+
+১. **রিপোজিটরি ক্লোন করুন:**
+   ```bash
+   git clone [Your-Repo-Link]
+   cd medicare
+২. ডিপেনডেন্সি ইনস্টল করুন:
+
+Bash
+npm install
+৩. এনভায়রনমেন্ট সেটআপ:
+প্রজেক্টের রুট ডিরেক্টরিতে .env.local নামে একটি ফাইল তৈরি করুন এবং আপনার Firebase, MongoDB ও Stripe এর কি (keys) গুলো দিন।
+
+৪. প্রজেক্ট রান করুন:
+
+Bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🔐 অ্যাডমিন এক্সেস (টেস্টিংয়ের জন্য)
+Email: admin@medicare.com
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Password: Admin!123
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+📊 অ্যানালিটিক্স ও চার্ট
+আমাদের ড্যাশবোর্ডে ডাক্তারদের পারফরম্যান্স এবং অ্যাপয়েন্টমেন্ট ট্রেন্ড বোঝার জন্য Recharts ব্যবহার করা হয়েছে, যা ডাটা ভিজ্যুয়ালাইজেশনে সাহায্য করে।
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+👨‍💻 ডেভেলপার
+Name: [RahimMiah]
 
-## Learn More
+GitHub-Client: [https://github.com/Rahim-Ahmed-10/medicare-connect-client]
+GitHub-Server: [https://github.com/Rahim-Ahmed-10/medicare-connect-server]
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Live Site: [https://medicare-connect-client-theta.vercel.app]
