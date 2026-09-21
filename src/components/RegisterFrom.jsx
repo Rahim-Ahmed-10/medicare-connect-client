@@ -2,7 +2,19 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client"; 
+import { authClient } from "@/lib/auth-client";
+import { 
+  FaUser, 
+  FaEnvelope, 
+  FaLock, 
+  FaImage, 
+  FaUserNurse, 
+  FaUserGear, 
+  FaUserCheck, 
+  FaShieldHalved, 
+  FaArrowLeft,
+  FaGoogle
+} from "react-icons/fa6";
 
 export default function Register() {
   const router = useRouter();
@@ -17,7 +29,7 @@ export default function Register() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false); 
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   // পাসওয়ার্ড ভ্যালিডেশন চেক
   const validatePassword = (password) => {
@@ -29,7 +41,7 @@ export default function Register() {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError(""); 
+    setError("");
   };
 
   // ১. সাধারণ ইমেইল/পাসওয়ার্ড সাবমিট
@@ -50,7 +62,7 @@ export default function Register() {
 
     setLoading(true);
     try {
-      const res = await authClient.signUp.email({
+      await authClient.signUp.email({
         email: formData.email,
         password: formData.password,
         name: formData.name,
@@ -61,9 +73,6 @@ export default function Register() {
       }, {
         onSuccess: () => {
           setSuccess(`Account created successfully as ${formData.role}! 🎉 Redirecting...`);
-          
-          // 🎯 ম্যাজিক লাইন: router.push-এর বদলে হার্ড রিফ্রেশ করে হোম পেজে পাঠানো হচ্ছে
-          // এর ফলে ব্রাউজারের সেশন স্টেট সম্পূর্ণ রিফ্রেশ হবে এবং নেভবার সাথে সাথে আপডেট হবে।
           setTimeout(() => {
             window.location.href = "/login";
           }, 1500);
@@ -72,7 +81,6 @@ export default function Register() {
           setError(ctx.error.message || "Something went wrong.");
         }
       });
-
     } catch (err) {
       setError("Failed to register. Please try again.");
     } finally {
@@ -80,179 +88,238 @@ export default function Register() {
     }
   };
 
-  // ২. গুগল দিয়ে সাইন আপ হ্যান্ডেলার
-  // const handleGoogleSignUp = async () => {
-  //   setError("");
-  //   setGoogleLoading(true);
-  //   try {
-  //     await authClient.signIn.social({
-  //       provider: "google",
-  //       callbackURL: "/", // গুগল লগইন শেষে এই ইউআরএল-এ ব্যাক করবে
-  //       // 🌟 Better-Auth-এর লেটেস্ট নিয়ম অনুযায়ী কাস্টম ফিল্ড এভাবে পাস করতে হয়
-  //       userAdditionalFields: {
-  //         role: formData.role,
-  //         status: formData.role === "doctor" ? "unverified" : "active",
-  //         plan: "free"
-  //       }
-  //     });
-  //   } catch (err) {
-  //     setError("Google sign up failed. Please try again.");
-  //     console.error(err);
-  //     setGoogleLoading(false);
-  //   }
-  // };
-
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-slate-50/50 px-4 py-12">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-slate-950 py-10 px-4 sm:px-6 relative overflow-hidden">
+      
+      {/* Background Decorative Glow */}
+      <div className="absolute top-1/4 right-10 w-96 h-96 bg-cyan-600/10 rounded-full filter blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 left-10 w-96 h-96 bg-blue-600/10 rounded-full filter blur-[120px] pointer-events-none" />
+
+      {/* Main Split Container */}
+      <div className="w-full max-w-5xl bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-slate-800 shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 relative z-10">
         
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-slate-900">Create Account</h2>
-          <p className="text-sm text-slate-500 mt-2">Join MediCare Connect today</p>
-        </div>
-
-        {/* Alert Notifications */}
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-medium">
-            ⚠️ {error}
-          </div>
-        )}
-        {success && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-600 rounded-xl text-sm font-medium">
-            ✅ {success}
-          </div>
-        )}
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* 🔐 LEFT PANEL: Register Form */}
+        <div className="lg:col-span-7 p-8 sm:p-10 lg:p-12 bg-slate-900/90 flex flex-col justify-center space-y-5">
           
-          {/* Name */}
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">Full Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="John Doe"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 text-sm text-slate-900 bg-white transition-colors"
-            />
-          </div>
-
-          {/* Email */}
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">Email Address</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="name@example.com"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 text-sm text-slate-900 bg-white transition-colors"
-            />
-          </div>
-
-          {/* Photo URL */}
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">Photo URL</label>
-            <input
-              type="url"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              placeholder="https://example.com/photo.jpg"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 text-sm text-slate-900 bg-white transition-colors"
-            />
-          </div>
-
-          {/* Role Selection */}
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">Register As</label>
-            <div className="grid grid-cols-3 gap-2">
-              {/* Patient */}
-              <label className={`flex items-center justify-center py-3 rounded-xl border-2 cursor-pointer transition-all ${formData.role === "patient" ? "border-blue-600 bg-blue-50/50 text-blue-700 font-semibold" : "border-slate-200 text-slate-600 text-xs"}`}>
-                <input
-                  type="radio"
-                  name="role"
-                  value="patient"
-                  checked={formData.role === "patient"}
-                  onChange={handleChange}
-                  className="sr-only"
-                />
-                Patient
-              </label>
-
-              {/* Doctor */}
-              <label className={`flex items-center justify-center py-3 rounded-xl border-2 cursor-pointer transition-all ${formData.role === "doctor" ? "border-blue-600 bg-blue-50/50 text-blue-700 font-semibold" : "border-slate-200 text-slate-600 text-xs"}`}>
-                <input
-                  type="radio"
-                  name="role"
-                  value="doctor"
-                  checked={formData.role === "doctor"}
-                  onChange={handleChange}
-                  className="sr-only"
-                />
-                Doctor
-              </label>
-
-              {/* Admin */}
-              <label className={`flex items-center justify-center py-3 rounded-xl border-2 cursor-pointer transition-all ${formData.role === "admin" ? "border-purple-600 bg-purple-50/50 text-purple-700 font-semibold" : "border-slate-200 text-slate-600 text-xs"}`}>
-                <input
-                  type="radio"
-                  name="role"
-                  value="admin"
-                  checked={formData.role === "admin"}
-                  onChange={handleChange}
-                  className="sr-only"
-                />
-                Admin
-              </label>
-            </div>
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-sm font-semibold text-slate-700 mb-1">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-500 text-sm text-slate-900 bg-white transition-colors"
-            />
-            <p className="text-[11px] text-slate-400 mt-1 leading-normal">
-              Must be at least 6 characters, include 1 number and 1 special character.
+          <div className="text-center lg:text-left space-y-1">
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
+              Create Account
+            </h3>
+            <p className="text-slate-400 text-sm">
+              Join MediCare Connect today and manage your healthcare.
             </p>
           </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading || googleLoading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-lg shadow-blue-100 transition-all cursor-pointer flex items-center justify-center disabled:bg-blue-400 disabled:cursor-not-allowed text-sm mt-2"
-          >
-            {loading ? "Creating Account..." : "Sign Up"}
-          </button>
-        </form>
+          {/* Alert Notifications */}
+          {error && (
+            <div className="p-3.5 bg-red-950/50 border border-red-800/80 text-red-300 rounded-2xl text-xs font-medium flex items-center gap-2">
+              ⚠️ {error}
+            </div>
+          )}
+          {success && (
+            <div className="p-3.5 bg-emerald-950/50 border border-emerald-800/80 text-emerald-300 rounded-2xl text-xs font-medium flex items-center gap-2">
+              ✅ {success}
+            </div>
+          )}
 
-        {/* Divider */}
-        <div className="relative flex py-5 items-center">
-          <div className="flex-grow border-t border-slate-150"></div>
-          <span className="flex-shrink mx-4 text-slate-400 text-xs uppercase font-semibold tracking-wider">Or register with</span>
-          <div className="flex-grow border-t border-slate-150"></div>
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            
+            {/* Full Name */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Full Name
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+                  <FaUser className="w-4 h-4" />
+                </div>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="John Doe"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-800/80 border border-slate-700/80 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 rounded-xl text-sm text-slate-100 placeholder-slate-500 transition-all outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Email Address */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+                  <FaEnvelope className="w-4 h-4" />
+                </div>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="name@example.com"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-800/80 border border-slate-700/80 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 rounded-xl text-sm text-slate-100 placeholder-slate-500 transition-all outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Photo URL */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Photo URL
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+                  <FaImage className="w-4 h-4" />
+                </div>
+                <input
+                  type="url"
+                  name="image"
+                  value={formData.image}
+                  onChange={handleChange}
+                  placeholder="https://example.com/photo.jpg"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-800/80 border border-slate-700/80 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 rounded-xl text-sm text-slate-100 placeholder-slate-500 transition-all outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Role Selection */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Register As
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                
+                {/* Patient Option */}
+                <label className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border cursor-pointer transition-all ${formData.role === "patient" ? "border-cyan-500 bg-cyan-500/10 text-cyan-400 font-bold" : "border-slate-800 bg-slate-800/40 text-slate-400 hover:bg-slate-800/80"}`}>
+                  <input
+                    type="radio"
+                    name="role"
+                    value="patient"
+                    checked={formData.role === "patient"}
+                    onChange={handleChange}
+                    className="sr-only"
+                  />
+                  <FaUserCheck className="text-xs" />
+                  <span className="text-xs">Patient</span>
+                </label>
+
+                {/* Doctor Option */}
+                <label className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border cursor-pointer transition-all ${formData.role === "doctor" ? "border-cyan-500 bg-cyan-500/10 text-cyan-400 font-bold" : "border-slate-800 bg-slate-800/40 text-slate-400 hover:bg-slate-800/80"}`}>
+                  <input
+                    type="radio"
+                    name="role"
+                    value="doctor"
+                    checked={formData.role === "doctor"}
+                    onChange={handleChange}
+                    className="sr-only"
+                  />
+                  <FaUserNurse className="text-xs" />
+                  <span className="text-xs">Doctor</span>
+                </label>
+
+                {/* Admin Option */}
+                <label className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border cursor-pointer transition-all ${formData.role === "admin" ? "border-purple-500 bg-purple-500/10 text-purple-400 font-bold" : "border-slate-800 bg-slate-800/40 text-slate-400 hover:bg-slate-800/80"}`}>
+                  <input
+                    type="radio"
+                    name="role"
+                    value="admin"
+                    checked={formData.role === "admin"}
+                    onChange={handleChange}
+                    className="sr-only"
+                  />
+                  <FaUserGear className="text-xs" />
+                  <span className="text-xs">Admin</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Password Field */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+                  <FaLock className="w-4 h-4" />
+                </div>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  className="w-full pl-11 pr-4 py-3 bg-slate-800/80 border border-slate-700/80 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 rounded-xl text-sm text-slate-100 placeholder-slate-500 transition-all outline-none"
+                />
+              </div>
+              <p className="text-[11px] text-slate-500 leading-normal">
+                Min. 6 chars, with at least 1 number & 1 special character.
+              </p>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading || googleLoading}
+              className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-cyan-600/20 transition-all cursor-pointer flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm active:scale-[0.99] mt-2"
+            >
+              {loading ? "Creating Account..." : "SIGN UP"}
+            </button>
+          </form>
+
+          {/* Footer Mobile Link */}
+          <p className="text-center text-xs text-slate-500 lg:hidden pt-2">
+            Already have an account?{" "}
+            <Link href="/login" className="text-cyan-400 font-semibold hover:underline">
+              Sign In
+            </Link>
+          </p>
+
         </div>
 
-        
+        {/* 🚀 RIGHT PANEL: Hero Side (One of us?) */}
+        <div className="lg:col-span-5 bg-gradient-to-br from-cyan-600 via-blue-600 to-blue-700 p-8 lg:p-12 text-white flex flex-col justify-between relative overflow-hidden order-first lg:order-last">
+          
+          {/* Subtle Background Pattern */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,#ffffff15_0%,transparent_60%)] pointer-events-none" />
 
-        {/* Footer Link */}
-        <p className="text-center text-sm text-slate-600 mt-6">
-          Already have an account?{" "}
-          <Link href="/login" className="text-blue-600 font-semibold hover:underline">
-            Login
-          </Link>
-        </p>
+          {/* Top Tag */}
+          <div className="relative z-10">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-full text-xs font-medium border border-white/20">
+              <FaShieldHalved className="text-cyan-200" />
+              MediCare Connect
+            </div>
+          </div>
+
+          {/* Center Text & Link */}
+          <div className="my-10 lg:my-0 relative z-10 space-y-6 text-center lg:text-left">
+            <div className="space-y-3">
+              <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                One of us ?
+              </h2>
+              <p className="text-cyan-100/80 text-sm leading-relaxed max-w-sm mx-auto lg:mx-0">
+                If you already have an account, just sign in. We've missed you!
+              </p>
+            </div>
+
+            <div className="pt-2">
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-xl border border-white/30 backdrop-blur-md transition-all text-sm group"
+              >
+                <FaArrowLeft className="text-xs transition-transform group-hover:-translate-x-1" />
+                Sign In Now
+              </Link>
+            </div>
+          </div>
+
+          {/* Bottom Footer Text */}
+          <div className="relative z-10 text-xs text-cyan-200/60 hidden lg:block">
+            © MediCare Portal. All Rights Reserved.
+          </div>
+        </div>
 
       </div>
     </div>
