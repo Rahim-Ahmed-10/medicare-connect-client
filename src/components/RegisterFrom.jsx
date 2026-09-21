@@ -31,7 +31,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  // পাসওয়ার্ড ভ্যালিডেশন চেক
+  // পাসওয়ার্ড ভ্যালিডেশন চেক (Min 6 chars, 1 number, 1 special char)
   const validatePassword = (password) => {
     const minLength = password.length >= 6;
     const hasNumber = /\d/.test(password);
@@ -50,7 +50,7 @@ export default function Register() {
     setError("");
     setSuccess("");
 
-    if (!formData.name || !formData.email || !formData.password || !formData.image) {
+    if (!formData.name.trim() || !formData.email.trim() || !formData.password || !formData.image.trim()) {
       setError("Please fill in all fields, including the Photo URL.");
       return;
     }
@@ -63,37 +63,52 @@ export default function Register() {
     setLoading(true);
     try {
       await authClient.signUp.email({
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
-        name: formData.name,
-        image: formData.image,
+        name: formData.name.trim(),
+        image: formData.image.trim(),
         role: formData.role,
         status: formData.role === "doctor" ? "unverified" : "active",
-        plan: 'free'
+        plan: "free"
       }, {
         onSuccess: () => {
-          setSuccess(`Account created successfully as ${formData.role}! 🎉 Redirecting...`);
+          setSuccess(`Account created successfully as ${formData.role}! 🎉 Redirecting to login...`);
           setTimeout(() => {
-            window.location.href = "/login";
+            router.push("/login");
           }, 1500);
         },
         onError: (ctx) => {
           setError(ctx.error.message || "Something went wrong.");
+          setLoading(false);
         }
       });
     } catch (err) {
       setError("Failed to register. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
 
+  // ২. গুগল সাইন-ইন হ্যান্ডলার
+  const handleGoogleSignIn = async () => {
+    setError("");
+    setGoogleLoading(true);
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+    } catch (err) {
+      setError("Google sign up failed. Please try again.");
+      setGoogleLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-slate-950 py-10 px-4 sm:px-6 relative overflow-hidden">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-slate-950 py-10 px-4 sm:px-6 relative overflow-hidden selection:bg-cyan-500 selection:text-white">
       
       {/* Background Decorative Glow */}
-      <div className="absolute top-1/4 right-10 w-96 h-96 bg-cyan-600/10 rounded-full filter blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 left-10 w-96 h-96 bg-blue-600/10 rounded-full filter blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 right-10 w-96 h-96 bg-cyan-600/10 rounded-full filter blur-[120px] pointer-events-none animate-pulse" />
+      <div className="absolute bottom-1/4 left-10 w-96 h-96 bg-blue-600/10 rounded-full filter blur-[120px] pointer-events-none animate-pulse" />
 
       {/* Main Split Container */}
       <div className="w-full max-w-5xl bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-slate-800 shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 relative z-10">
@@ -102,7 +117,7 @@ export default function Register() {
         <div className="lg:col-span-7 p-8 sm:p-10 lg:p-12 bg-slate-900/90 flex flex-col justify-center space-y-5">
           
           <div className="text-center lg:text-left space-y-1">
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-white">
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
               Create Account
             </h3>
             <p className="text-slate-400 text-sm">
@@ -112,13 +127,15 @@ export default function Register() {
 
           {/* Alert Notifications */}
           {error && (
-            <div className="p-3.5 bg-red-950/50 border border-red-800/80 text-red-300 rounded-2xl text-xs font-medium flex items-center gap-2">
-              ⚠️ {error}
+            <div className="p-3.5 bg-red-950/50 border border-red-800/80 text-red-300 rounded-2xl text-xs font-medium flex items-center gap-2 animate-in fade-in duration-200">
+              <span>⚠️</span>
+              <span>{error}</span>
             </div>
           )}
           {success && (
-            <div className="p-3.5 bg-emerald-950/50 border border-emerald-800/80 text-emerald-300 rounded-2xl text-xs font-medium flex items-center gap-2">
-              ✅ {success}
+            <div className="p-3.5 bg-emerald-950/50 border border-emerald-800/80 text-emerald-300 rounded-2xl text-xs font-medium flex items-center gap-2 animate-in fade-in duration-200">
+              <span>✅</span>
+              <span>{success}</span>
             </div>
           )}
 
@@ -130,8 +147,8 @@ export default function Register() {
               <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
                 Full Name
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-cyan-400 transition-colors">
                   <FaUser className="w-4 h-4" />
                 </div>
                 <input
@@ -150,8 +167,8 @@ export default function Register() {
               <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
                 Email Address
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-cyan-400 transition-colors">
                   <FaEnvelope className="w-4 h-4" />
                 </div>
                 <input
@@ -170,8 +187,8 @@ export default function Register() {
               <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
                 Photo URL
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-cyan-400 transition-colors">
                   <FaImage className="w-4 h-4" />
                 </div>
                 <input
@@ -241,8 +258,8 @@ export default function Register() {
               <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
                 Password
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-cyan-400 transition-colors">
                   <FaLock className="w-4 h-4" />
                 </div>
                 <input
@@ -265,9 +282,42 @@ export default function Register() {
               disabled={loading || googleLoading}
               className="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-cyan-600/20 transition-all cursor-pointer flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed text-sm active:scale-[0.99] mt-2"
             >
-              {loading ? "Creating Account..." : "SIGN UP"}
+              {loading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Creating Account...</span>
+                </div>
+              ) : (
+                "SIGN UP"
+              )}
             </button>
           </form>
+
+          {/* Social Sign Up Divider */}
+          <div className="relative flex py-1 items-center">
+            <div className="flex-grow border-t border-slate-800"></div>
+            <span className="flex-shrink mx-4 text-slate-500 text-[11px] uppercase font-bold tracking-wider">
+              Or Sign up with
+            </span>
+            <div className="flex-grow border-t border-slate-800"></div>
+          </div>
+
+          {/* Google Social Registration Button */}
+          <button
+            type="button"
+            onClick={handleGoogleSignIn}
+            disabled={loading || googleLoading}
+            className="w-full flex items-center justify-center gap-3 bg-slate-800/40 hover:bg-slate-800/80 text-slate-200 font-semibold py-3 px-4 rounded-xl border border-slate-700/80 hover:border-slate-600 shadow-md transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-sm group"
+          >
+            {googleLoading ? (
+              <div className="w-4 h-4 border-2 border-slate-400 border-t-white rounded-full animate-spin" />
+            ) : (
+              <FaGoogle className="w-4 h-4 text-rose-500 group-hover:scale-110 transition-transform" />
+            )}
+            <span>
+              {googleLoading ? "Connecting..." : "Continue with Google"}
+            </span>
+          </button>
 
           {/* Footer Mobile Link */}
           <p className="text-center text-xs text-slate-500 lg:hidden pt-2">
