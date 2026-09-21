@@ -2,7 +2,7 @@
 "use server" // 👈 এটি অবশ্যই "use server" হতে হবে!
 
 export const subscription = async (data) => {
-  // সার্ভার সাইডে ব্যবহারের জন্য NEXT_PUBLIC_BASE_URL অথবা সরাসরি লোকালহোস্ট ফলব্যাক
+  
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || "https://medicare-connect-server-nine.vercel.app"
   
   try {

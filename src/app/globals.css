@@ -1,3 +1,2 @@
 @import "tailwindcss";
-@import "@heroui/styles"; 
-
+@variant dark (&:where(.dark, .dark *));
