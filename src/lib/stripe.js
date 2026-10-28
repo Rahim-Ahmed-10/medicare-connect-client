@@ -1,16 +1,29 @@
-import 'server-only'
-
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 
-// স্ট্রাইপ ইনিশিয়েলাইজেশন
+// Stripe SDK ইনিশিয়ালাইজেশন
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
 export async function POST(req) {
   try {
-    // ফ্রন্টএন্ড (View Details & Book পেজ) থেকে পাঠানো ডক্টরের ইনফো, ডেট, টাইম রিসিভ করা
-    const { doctorName, specialty, date, time, amount } = await req.json()
+    const body = await req.json()
 
+    // ফ্রন্টএন্ড থেকে পাঠানো ডাটা রিসিভ
+    const { 
+      doctorName = "Doctor Consultation", 
+      specialty = "Specialist", 
+      appointmentDate, 
+      selectedSlot, 
+      consultationFee 
+    } = body
+
+    // Safe amount parsing (সেন্ট বা পয়সা হিসেবে রূপান্তর)
+    const numericFee = parseFloat(consultationFee) || 130
+    const unitAmount = Math.round(numericFee * 100)
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+
+    // Stripe Checkout Session তৈরি
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
@@ -18,25 +31,28 @@ export async function POST(req) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: `${doctorName} - Appointment Consultation`,
-              description: `Specialty: ${specialty} | Date: ${date} | Time: ${time}`,
+              name: `${doctorName} - Clinical Consultation`,
+              description: `Specialty: ${specialty} | Date: ${appointmentDate || 'TBD'} | Time: ${selectedSlot || 'TBD'}`,
+              images: ['https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80'],
             },
-            unit_amount: amount * 100, // স্ট্রাইপ সেন্ট (Cent) হিসেবে হিসাব করে, তাই ১০০ দিয়ে গুন
+            unit_amount: unitAmount,
           },
           quantity: 1,
         },
       ],
       mode: 'payment',
       
-      // 🚀 এই সাকসেস ইউআরএল-ই ফ্রন্টএন্ড ড্যাশবোর্ডে ডাইনামিক ডাটা পাস করবে
-      // আপনার Stripe.checkout.sessions.create-এর ভেতর success_url-টি এমন হবে:
-success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/find-doctors/success?doctorName=${encodeURIComponent(doctorName)}&specialty=${encodeURIComponent(specialty)}&date=${date}&time=${time}&amount=${amount}`,
+      // সাকসেস হলে ড্যাশবোর্ডে রিডাইরেক্ট হবে
+      success_url: `${baseUrl}/find-doctors/success?session_id={CHECKOUT_SESSION_ID}&doctorName=${encodeURIComponent(doctorName)}&specialty=${encodeURIComponent(specialty)}&date=${encodeURIComponent(appointmentDate || '')}&time=${encodeURIComponent(selectedSlot || '')}&amount=${numericFee}`,
       
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/find-doctors`,
+      cancel_url: `${baseUrl}/find-doctors`,
     })
 
-    return NextResponse.json({ id: session.id })
+    // Stripe Checkout URL সরাসরি ফ্রন্টএন্ডে পাঠানো
+    return NextResponse.json({ id: session.id, url: session.url })
+
   } catch (error) {
+    console.error("❌ Stripe Checkout Session Error:", error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

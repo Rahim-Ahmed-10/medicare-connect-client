@@ -1,70 +1,73 @@
-# 🏥 MediCare
+# 🏥 MediCare Connect
 
-একটি আধুনিক এবং পূর্ণাঙ্গ হেলথকেয়ার ম্যানেজমেন্ট প্ল্যাটফর্ম যা রোগী, ডাক্তার এবং অ্যাডমিনের মধ্যে নিরবচ্ছিন্ন সমন্বয় সাধন করে।
-
-## 📋 প্রজেক্টের সংক্ষিপ্ত বিবরণ
-**MediCare Connect** এমন একটি ডিজিটাল ইকোসিস্টেম যেখানে রোগীরা সহজেই বিশেষজ্ঞ ডাক্তার খুঁজে অ্যাপয়েন্টমেন্ট নিতে পারেন, নিরাপদ পেমেন্ট সম্পন্ন করতে পারেন এবং ডিজিটাল প্রেসক্রিপশন গ্রহণ করতে পারেন। পাশাপাশি ডাক্তার এবং অ্যাডমিনদের জন্য রয়েছে আলাদা প্যানেল।
+A modern and full-stack healthcare management platform designed to streamline seamless coordination between patients, doctors, and administrators.
 
 ---
 
-## 🛠 প্রযুক্তি ও টুলস (Tech Stack)
-* **Frontend:** Next.js (App Router), Tailwind CSS, Framer Motion, Recharts
-* **Backend:** Node.js, Express.js
-* **Database:** MongoDB
-* **Authentication:** JWT, Firebase (Google Login)
-* **Payment Gateway:** Stripe
+## 📋 Overview
+**MediCare Connect** is a robust digital ecosystem where patients can easily discover specialist doctors, book instant appointments, complete secure payments via Stripe, and receive digital prescriptions. It also features dedicated management portals for doctors and administrators.
 
 ---
 
-## ✨ মূল ফিচারসমূহ
-
-### 👤 রোগী (Patient)
-- **ডাক্তার খুঁজে পাওয়া:** নাম এবং স্পেশালিটি অনুযায়ী ডাক্তার সার্চ ও ফিল্টারিং।
-- **অ্যাপয়েন্টমেন্ট:** সরাসরি অ্যাপয়েন্টমেন্ট বুকিং সুবিধা।
-- **পেমেন্ট:** Stripe গেটওয়ের মাধ্যমে নিরাপদ পেমেন্ট।
-- **হিস্টোরি:** অ্যাপয়েন্টমেন্ট হিস্টোরি এবং রিভিউ প্রদানের সুযোগ।
-
-### 👨‍⚕️ ডাক্তার (Doctor)
-- **প্রোফাইল:** পূর্ণাঙ্গ প্রোফাইল ম্যানেজমেন্ট ও শিডিউল সেটআপ।
-- **ম্যানেজমেন্ট:** অ্যাপয়েন্টমেন্ট রিকোয়েস্ট একসেপ্ট/রিজেক্ট করা।
-- **প্রেসক্রিপশন:** রোগীদের জন্য ডিজিটাল প্রেসক্রিপশন তৈরি ও ম্যানেজমেন্ট।
-
-### 🛡️ অ্যাডমিন (Admin)
-- **ইউজার কন্ট্রোল:** ইউজার এবং ডাক্তারদের প্রোফাইল ভেরিফিকেশন ও ম্যানেজমেন্ট।
-- **মনিটরিং:** পেমেন্ট এবং অ্যাপয়েন্টমেন্ট রেকর্ড পর্যবেক্ষণ।
-- **অ্যানালিটিক্স:** ড্যাশবোর্ডে রিয়েল-টাইম অ্যানালিটিক্স ও চার্ট (Recharts)।
+## 🛠 Tech Stack
+- **Frontend:** Next.js (App Router), Tailwind CSS, Framer Motion, Recharts
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB
+- **Authentication:** JWT, Firebase (Google Login)
+- **Payment Gateway:** Stripe
 
 ---
 
-## 🚀 ইন্সটলেশন ও রান করার নিয়ম
+## ✨ Key Features
 
-১. **রিপোজিটরি ক্লোন করুন:**
+### 👤 Patient Portal
+- **Doctor Discovery:** Search and filter doctors by name, hospital, and specialization.
+- **Appointment Booking:** Secure and seamless live schedule booking.
+- **Secure Payments:** Integrated Stripe checkout gateway for consultation fees.
+- **History & Reviews:** Track appointment history and submit doctor reviews.
+
+### 👨‍⚕️ Doctor Portal
+- **Profile & Schedule Management:** Comprehensive profile settings and availability scheduling.
+- **Appointment Control:** Accept or reject incoming patient appointment requests.
+- **Digital Prescriptions:** Generate and manage medical prescriptions for patients.
+
+### 🛡️ Admin Dashboard
+- **User Control:** Verify and manage user and doctor profiles/roles.
+- **Monitoring:** Oversee platform-wide transactions, payments, and appointment records.
+- **Analytics:** Real-time data visualization and charts powered by Recharts.
+
+---
+
+## 🚀 Installation & Setup
+
+1. **Clone the Repository:**
    ```bash
-   git clone [Your-Repo-Link]
-   cd medicare
-২. ডিপেনডেন্সি ইনস্টল করুন:
+   git clone [https://github.com/Rahim-Ahmed-10/medicare-connect-client.git](https://github.com/Rahim-Ahmed-10/medicare-connect-client.git)
+   cd medicare-connect-client
+Install Dependencies:
 
 Bash
 npm install
-৩. এনভায়রনমেন্ট সেটআপ:
-প্রজেক্টের রুট ডিরেক্টরিতে .env.local নামে একটি ফাইল তৈরি করুন এবং আপনার Firebase, MongoDB ও Stripe এর কি (keys) গুলো দিন।
+Environment Setup:
+Create a .env.local file in the root directory and add your respective Firebase, MongoDB, and Stripe secret keys.
 
-৪. প্রজেক্ট রান করুন:
+Run the Development Server:
 
 Bash
 npm run dev
-🔐 অ্যাডমিন এক্সেস (টেস্টিংয়ের জন্য)
+🔐 Test Admin Credentials
 Email: admin@medicare.com
 
 Password: Admin!123
 
-📊 অ্যানালিটিক্স ও চার্ট
-আমাদের ড্যাশবোর্ডে ডাক্তারদের পারফরম্যান্স এবং অ্যাপয়েন্টমেন্ট ট্রেন্ড বোঝার জন্য Recharts ব্যবহার করা হয়েছে, যা ডাটা ভিজ্যুয়ালাইজেশনে সাহায্য করে।
+📊 Analytics & Data Visualization
+The dashboard utilizes Recharts to display doctor performance metrics and appointment trends dynamically, providing insightful data visualization.
 
-👨‍💻 ডেভেলপার
-Name: [RahimMiah]
+👨‍💻 Developer
+Name: Rahim Miah
 
-GitHub-Client: [https://github.com/Rahim-Ahmed-10/medicare-connect-client]
-GitHub-Server: [https://github.com/Rahim-Ahmed-10/medicare-connect-server]
+GitHub Client: https://github.com/Rahim-Ahmed-10/medicare-connect-client
 
-Live Site: [https://medicare-connect-client-theta.vercel.app]
+GitHub Server: https://github.com/Rahim-Ahmed-10/medicare-connect-server
+
+Live Preview: https://medicare-connect-client-theta.vercel.app

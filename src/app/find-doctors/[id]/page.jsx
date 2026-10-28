@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { authClient } from "@/lib/auth-client"; 
+import { authClient } from "@/lib/auth-client";
 
 import { 
   FaChevronLeft, 
@@ -23,41 +24,43 @@ import {
   FaCalendarPlus
 } from "react-icons/fa";
 
+const generateUpcomingDates = () => {
+  const dates = [];
+  const today = new Date();
+
+  for (let i = 0; i < 7; i += 1) {
+    const d = new Date();
+    d.setDate(today.getDate() + i);
+    dates.push({
+      fullDate: d.toISOString().split("T")[0],
+      dayName: d.toLocaleDateString("en-US", { weekday: "short" }),
+      dayNum: d.getDate(),
+      month: d.toLocaleDateString("en-US", { month: "short" }),
+    });
+  }
+
+  return dates;
+};
+
 export default function DoctorDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const [doctor, setDoctor] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Form Interaction States
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(() => generateUpcomingDates()[0]?.fullDate ?? "");
   const [selectedSlot, setSelectedSlot] = useState("");
   const [symptoms, setSymptoms] = useState("");
   const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
 
   // Next 7 Days Quick Selection Generator
-  const [upcomingDates, setUpcomingDates] = useState([]);
+  const upcomingDates = useMemo(() => generateUpcomingDates(), []);
 
   // Extract Better Auth Client Token
   const token = authClient.useSession()?.data?.session?.token || authClient.token?.();
 
   useEffect(() => {
-    // Generate next 7 days for quick date pick
-    const dates = [];
-    const today = new Date();
-    for (let i = 0; i < 7; i++) {
-      const d = new Date();
-      d.setDate(today.getDate() + i);
-      dates.push({
-        fullDate: d.toISOString().split("T")[0],
-        dayName: d.toLocaleDateString("en-US", { weekday: "short" }),
-        dayNum: d.getDate(),
-        month: d.toLocaleDateString("en-US", { month: "short" })
-      });
-    }
-    setUpcomingDates(dates);
-    setSelectedDate(dates[0].fullDate);
-
     fetch("/doctors.json")
       .then((res) => res.json())
       .then((data) => {
@@ -187,9 +190,12 @@ export default function DoctorDetailsPage() {
                 
                 {/* Glowing Avatar */}
                 <div className="relative w-32 h-32 rounded-2xl overflow-hidden p-[2px] bg-gradient-to-b from-blue-500 via-indigo-500 to-slate-800 flex-shrink-0 shadow-2xl shadow-blue-500/10">
-                  <img 
-                    src={doctor.profileImage || "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=400&auto=format&fit=crop"} 
+                  <Image
+                    src={doctor.profileImage || "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=400&auto=format&fit=crop"}
                     alt={doctor.doctorName}
+                    width={400}
+                    height={400}
+                    unoptimized
                     className="w-full h-full object-cover rounded-[14px] bg-[#0B0F19] object-top"
                   />
                   <div className="absolute bottom-2 right-2 bg-emerald-500 text-slate-950 p-1 rounded-full text-[10px] shadow-lg border border-slate-950" title="Verified Practitioner">
@@ -259,7 +265,7 @@ export default function DoctorDetailsPage() {
                 <span className="text-[10px] text-slate-400 font-mono uppercase tracking-wider">(124 Consultations Logged)</span>
               </div>
               <p className="text-[11px] text-slate-400 border-t border-slate-800/80 pt-3 leading-relaxed">
-                "Dr. {doctor.doctorName.split(" ")[1] || "Doctor"} was extremely attentive during our virtual session. Highly recommended for accurate diagnosis."
+                {`Dr. ${doctor.doctorName.split(" ")[1] || "Doctor"} was extremely attentive during our virtual session. Highly recommended for accurate diagnosis.`}
               </p>
             </div>
 
@@ -279,7 +285,7 @@ export default function DoctorDetailsPage() {
               </div>
               <h2 className="text-lg font-bold text-white tracking-tight mt-2">Book Consultation</h2>
               <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-                Choose a quick date pill or click "Custom Date" for future scheduling.
+                Choose a quick date pill or click Custom Date for future scheduling.
               </p>
             </div>
 
